@@ -90,6 +90,16 @@ export default {
           title: 'Категории',
           to: '/category'
         },
+        {
+          icon: 'mdi-factory',
+          title: 'Производители',
+          to: '/factory'
+        },
+        {
+          icon: 'mdi-cards',
+          title: 'Карточки товара',
+          to: '/cards'
+        },
 
       ],
       miniVariant: false,

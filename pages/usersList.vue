@@ -13,7 +13,7 @@
       <template v-slot:top>
         <v-text-field
           v-model="search"
-          label="Search (UPPER CASE ONLY)"
+          label="Поиск"
           class="mx-4"
         ></v-text-field>
       </template>
@@ -77,7 +77,15 @@ import cartUserChange from '@/components/cartChangeUser.vue'
          this.getMoreUsers()
     },
     watch:{
-        
+        search(newval){
+          if(newval==''){
+            if(this.timer!=null){clearTimeout(this.timer)}
+            this.getMoreUsers()
+          }else{
+            if(this.timer!=null){clearTimeout(this.timer)}
+            this.timer = setTimeout( this.serchUser,700,newval);
+          }
+        },
         options: {
         handler () {
             
@@ -128,6 +136,15 @@ import cartUserChange from '@/components/cartChangeUser.vue'
             this.rightDrawer=!this.rightDrawer;
             this.active_user = item;
             console.log(item);
+        },
+        async serchUser(search){
+            const { sortBy, sortDesc, page, itemsPerPage } = this.options
+            this.loading = true;
+            this.offset = itemsPerPage*(page-1);
+        let data_user = await this.$axios.get(`/users/users/?limit=${itemsPerPage}&offset=${this.offset}&search=${search}`);
+         this.users = data_user.data.results;
+         this.count = data_user.data.count;
+         this.loading = false;
         },
         async getMoreUsers(){
             const { sortBy, sortDesc, page, itemsPerPage } = this.options
