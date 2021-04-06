@@ -43,7 +43,7 @@
       fixed
       width="50%"
     >
-    <changeCard :rightDrawer.sync="rightDrawer" :card.sync="card" :currentCat="currentCat" :currentFirstCat="currentFirstCat" :cats_first="cats_first" :cats="cats" />
+    <changeCard :rightDrawer.sync="rightDrawer" :card.sync="card" :manufacturers="manufacturers" :currentCat="currentCat" :currentFirstCat="currentFirstCat" :cats_first="cats_first" :cats="cats" />
     </v-navigation-drawer>
     </div>
 </template>

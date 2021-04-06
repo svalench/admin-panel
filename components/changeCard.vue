@@ -34,6 +34,17 @@
         <v-card-title>
             <v-text-field v-model="card.s1_id" :value="card.s1_id" label="id в 1С"></v-text-field>
         </v-card-title>
+        <v-card-title>
+        <v-select
+        v-model="select_manuf"
+          :items="manufacturers"
+          item-text="name"
+          item-value="id"
+          label="Производитель"
+          dense
+          outlined
+        ></v-select>
+    </v-card-title>
     <v-card-title>
         <v-select
         v-model="select_cat"
@@ -102,6 +113,9 @@ export default {
     data(){
         return{
           files:[],
+          file1:'',
+          imagePreview:null,
+          select_manuf:undefined,
             select_cat:undefined,
             second_arr:[],
             select_cat_second:null,
@@ -109,7 +123,7 @@ export default {
              changeRow:{name:true, description:false, nikname:false, email:false},
         }
     },
-    props:['card','currentCat','cats','currentFirstCat', 'cats_first','rightDrawer'],
+    props:['card','currentCat','cats','currentFirstCat', 'cats_first','rightDrawer','manufacturers'],
     mounted(){
     },
     watch:{
@@ -122,6 +136,8 @@ export default {
             if(!newval){
                 this.select_cat = undefined;
                 this.select_cat_second={};
+                select_manuf = undefined;
+                this.imagePreview = null;
             }else{
                 if(this.currentCat!=null){
                     this.second_arr = this.cats.filter(x=>x.parent==this.currentFirstCat.id);
@@ -139,12 +155,23 @@ export default {
     methods:{
         save(){
             this.card.cat = this.select_cat_second.id==undefined?this.select_cat_second:this.select_cat_second.id;
-            if(this.card.img.name==undefined){
-               delete this.card.img;
-            }
+           
             let formData = new FormData();
                 if(this.card.name!=undefined){
                     formData.append('img', this.files);
+                    var reader = new FileReader();
+                    reader.addEventListener("load", function () {
+                      this.imagePreview = reader.result;
+                      this.card.img = this.imagePreview;
+                    }.bind(this), false);
+                     reader.readAsDataURL( this.files );
+                    
+                }else{
+                  delete this.card.img;
+                }
+                 if(this.select_manuf!=undefined){
+                  formData.append('manufacturer', this.select_manuf);
+                  this.card.manufacturer = this.select_manuf;
                 }
                  formData.append('name', this.card.name);
                  formData.append('cat', this.card.cat);
