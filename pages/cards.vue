@@ -12,11 +12,18 @@
 
     >
       <template v-slot:top>
+        <v-row>
+          <v-col cols="1">
+            <v-btn :href="$axios.defaults.baseURL+'/download/product/'" class="primary"><v-icon>mdi-file-download</v-icon></v-btn>
+          </v-col>
+          <v-col>
         <v-text-field
           v-model="search"
           label="Поиск по базе"
           class="mx-4"
         ></v-text-field>
+        </v-col>
+        </v-row>
       </template>
        <template v-slot:item.img="{ item }">
           <v-img
