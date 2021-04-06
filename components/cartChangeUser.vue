@@ -15,13 +15,28 @@
     <v-col>
     <v-img
       height="250"
-      :src="user.img"
-    ></v-img>
+      
+      v-bind:src="user.img"
+    >
+        <v-file-input
+            hide-input
+            chips
+            v-model="files"
+            @change="previewLoad"
+            truncate-length="15"
+      ></v-file-input>
+    </v-img>
     </v-col>
     <v-col>
  
-    <v-card-title>{{user.username}}</v-card-title>
-
+    <v-card-title v-if="!changeRow.nikname">{{user.username}} <v-icon v-if="user.id==undefined" @click="changeRow.nikname=true">mdi-lead-pencil</v-icon></v-card-title>
+    <v-card-title v-else>
+      <v-text-field v-model="user.username" :value="user.username" label="nikname пользоателя (желательно email)"></v-text-field>
+      <v-icon @click="changeRow.nikname=false">mdi-check-bold</v-icon>
+    </v-card-title>
+    <v-card-title v-if="user.id==undefined">
+      <v-text-field v-model="user.password" :value="user.password" label="пароль"></v-text-field>
+    </v-card-title>
     <v-card-text>
         <div class="my-4 subtitle-1" v-if="changeRow.username">
             <v-text-field v-model="user.first_name" :value="user.first_name" label="first name"></v-text-field>
@@ -43,6 +58,7 @@
           outlined
           name="input-7-4"
           label="description"
+          v-model="user.description"
           :value="user.description"
         ></v-textarea>
       <v-icon @click="changeRow.description=false">mdi-check-bold</v-icon>
@@ -106,24 +122,94 @@
 
 <script>
 export default {
-    props:['user'],
+    props:['user','rightDrawer','userList'],
     data(){
         return{
             changeRow:{username:false, description:false, nikname:false, email:false},
             loading:false,
             selection:1,
+            files:{},
+            imagePreview:undefined,
             birth_date:null,
         }
     },
+    watch:{
+         rightDrawer(newval){
+         if(!newval){
+            this.birth_date = null;
+            this.selection = 1;
+            this.changeRow = {username:false, description:false, nikname:false, email:false};
+         }else{
+           if(this.user.id==undefined){
+             for(let a in this.changeRow){
+               this.changeRow[a] = true;
+             }
+           }
+         }
+         },
+    },
     methods:{
+      previewLoad(){
+        if(this.user.id==undefined){
+          this.user.img= URL.createObjectURL(this.files)              
+                    // var reader = new FileReader();
+                    // reader.addEventListener("load", function () {
+                    //   console.log(reader);
+                    //   this.imagePreview = reader.result;
+                    //   this.user.img = this.imagePreview;
+                    // }.bind(this), false);
+                    // try{
+                    //      reader.readAsDataURL( this.files );
+                    // }catch{
+
+                    // }
+                    
+            }
+      },
         close(){
-            console.log(this.$parent);
-            this.$parent.rightDrawer = !this.$parent.rightDrawer;
+             this.$emit('update:rightDrawer', false)
         },
-        save(id){
-            delete this.user.password;
-            delete this.user.img;
-            this.$axios.put(`users/users/${id}/`, this.user)
+        async save(id){
+          
+           let formData = new FormData();
+           if(this.files.name!=undefined){
+                    formData.append('img', this.files);
+                    var reader = new FileReader();
+                    reader.addEventListener("load", function () {
+                      this.imagePreview = reader.result;
+                      this.user.img = this.imagePreview;
+                    }.bind(this), false);
+                     reader.readAsDataURL( this.files );
+                    
+                }else{
+                   delete this.user.img;
+                }
+            
+            formData.append('username', this.user.username);
+            formData.append('is_staff', this.user.is_staff?this.user.is_staff:false);
+            formData.append('is_superuser', this.user.is_superuser?this.user.is_superuser:false);
+             formData.append('sex', this.user.sex?this.user.sex:1);
+            formData.append('is_active', true);
+            formData.append('first_name', this.user.first_name?this.user.first_name:'');
+            formData.append('last_name', this.user.last_name?this.user.last_name:'');
+            formData.append('email', this.user.email?this.user.email:'');
+            formData.append('description', this.user.description?this.user.description:'');
+             formData.append('birth_date', this.user.birth_date?this.user.birth_date:'');
+           if(id==undefined){
+             let adata = {username:this.user.username,  password:this.user.password, password2:this.user.password}
+             console.log(adata);
+             let users = await this.$axios.post('/registration/backend/registration/', adata);
+             console.log(users);
+             if(users.data.id!=undefined){
+               let res = await this.$axios.put(`users/users/${users.data.id}/`,formData);
+               this.userList.unshift(res.data)
+             }
+             
+           }else{
+              this.$axios.put(`users/users/${id}/`,formData);
+           }
+            
+             this.$emit('update:rightDrawer', false)
         },
     },
 }

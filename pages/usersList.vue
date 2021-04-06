@@ -11,12 +11,20 @@
 
     >
       <template v-slot:top>
+        <v-row>
+              <v-col cols="1">
+          <v-btn @click="updateUser({})" class="primary"><v-icon>mdi-plus-box</v-icon></v-btn>
+          </v-col>
+          <v-col>
         <v-text-field
           v-model="search"
           label="Поиск"
           class="mx-4"
         ></v-text-field>
+          </v-col>
+        </v-row>
       </template>
+      
       <template v-slot:item.sex="{ item }">
       <v-chip
         :color="item.sex==0?'red':item.sex==1?'blue':'yellow'"
@@ -25,6 +33,12 @@
         {{ item.sex==0?'неопределен':item.sex==1?'мужской':'женский' }}
       </v-chip>
     </template>
+     <template v-slot:item.img="{ item }">
+          <v-img
+          width="80"
+      :src="item.img"
+    ></v-img>
+      </template>
     <template v-slot:item.action="{ item }">
      <v-btn class="error" @click="deleteUser(item)"> <v-icon light>
               mdi-delete-forever
@@ -43,7 +57,7 @@
       fixed
       width="40%"
     >
-    <cartUserChange :user="active_user" />
+    <cartUserChange :userList.sync="users"  :rightDrawer.sync="rightDrawer"  :user.sync="active_user" />
     </v-navigation-drawer>
   </div>
 </template>
@@ -113,6 +127,7 @@ import cartUserChange from '@/components/cartChangeUser.vue'
             },
           },
           { text: 'Ник пользователя', value: 'username' },
+           { text: 'изображение', value: 'img' },
           { text: 'имя', value: 'first_name' },
           { text: 'фамилия', value: 'last_name' },
           { text: 'Дата регистрации', value: 'date_joined' },
