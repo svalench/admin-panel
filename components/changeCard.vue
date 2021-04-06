@@ -136,7 +136,7 @@ export default {
             if(!newval){
                 this.select_cat = undefined;
                 this.select_cat_second={};
-                select_manuf = undefined;
+                this.select_manuf = undefined;
                 this.imagePreview = null;
             }else{
                 if(this.currentCat!=null){
@@ -157,7 +157,7 @@ export default {
             this.card.cat = this.select_cat_second.id==undefined?this.select_cat_second:this.select_cat_second.id;
            
             let formData = new FormData();
-                if(this.card.name!=undefined){
+                if(this.files.name!=undefined){
                     formData.append('img', this.files);
                     var reader = new FileReader();
                     reader.addEventListener("load", function () {
@@ -167,7 +167,7 @@ export default {
                      reader.readAsDataURL( this.files );
                     
                 }else{
-                  delete this.card.img;
+                 // delete this.card.img;
                 }
                  if(this.select_manuf!=undefined){
                   formData.append('manufacturer', this.select_manuf);
