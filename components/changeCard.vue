@@ -141,7 +141,7 @@ export default {
             }else{
                 if(this.currentCat!=null){
                     this.second_arr = this.cats.filter(x=>x.parent==this.currentFirstCat.id);
-                    this.select_cat_second=this.currentCat;
+                    this.select_cat_second=this.currentCat.id;
                    
                 }else{
                     this.select_cat_second=undefined;
