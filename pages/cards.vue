@@ -96,9 +96,9 @@ export default {
             value: 'name',
           },
           { text: 'описание', value: 'description' },
-          { text: 'категория', value: 'cat' },
+          { text: 'категория', value: 'cat_name' },
           { text: 'изображение', value: 'img' },
-          { text: 'производитель', value: 'manufacturer' },
+          { text: 'производитель', value: 'manufacturer_name' },
           { text: 'действия', value: 'actions' },
         ]
       },

@@ -154,8 +154,10 @@ export default {
     },
     methods:{
         save(){
-            this.card.cat = this.select_cat_second.id==undefined?this.select_cat_second:this.select_cat_second.id;
-           
+            this.card.cat = this.select_cat_second!=undefined?this.select_cat_second:'';
+           if (this.select_cat_second!=undefined){
+             this.card.cat_name= this.cats.filter(x=>x.id==this.select_cat_second)[0].name;
+           }
             let formData = new FormData();
                 if(this.files.name!=undefined){
                     formData.append('img', this.files);
@@ -172,6 +174,7 @@ export default {
                  if(this.select_manuf!=undefined){
                   formData.append('manufacturer', this.select_manuf);
                   this.card.manufacturer = this.select_manuf;
+                   this.card.manufacturer_name = this.manufacturers.filter(x=>x.id==this.select_manuf)[0].name ;
                 }
                  formData.append('name', this.card.name);
                  formData.append('cat', this.card.cat);
