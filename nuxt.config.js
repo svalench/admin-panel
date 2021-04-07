@@ -44,7 +44,8 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     proxy: false,
-    baseURL: "http://193.123.37.74:8000"
+    baseURL: "http://178.172.173.172:8001"
+   // baseURL: "http://178.172.173.172:8001"
     //baseURL:"http://192.168.100.73:8000"
   },
 

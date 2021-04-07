@@ -100,6 +100,11 @@ export default {
           title: 'Карточки товара',
           to: '/cards'
         },
+        {
+          icon: 'mdi-account-cash',
+          title: 'Список мантажников',
+          to: '/mounters'
+        },
 
       ],
       miniVariant: false,
