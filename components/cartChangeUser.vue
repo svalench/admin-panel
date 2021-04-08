@@ -197,9 +197,7 @@ export default {
              formData.append('birth_date', this.user.birth_date?this.user.birth_date:'');
            if(id==undefined){
              let adata = {username:this.user.username,  password:this.user.password, password2:this.user.password}
-             console.log(adata);
              let users = await this.$axios.post('/registration/backend/registration/', adata);
-             console.log(users);
              if(users.data.id!=undefined){
                let res = await this.$axios.put(`users/users/${users.data.id}/`,formData);
                this.userList.unshift(res.data)
