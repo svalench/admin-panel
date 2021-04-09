@@ -14,7 +14,7 @@
       <template v-slot:top>
         <v-row>
           <v-col cols="1">
-            <v-btn  class="primary"><v-icon>mdi-plus-box</v-icon></v-btn>
+            <v-btn @click="dialog=!dialog" class="primary"><v-icon>mdi-plus-box</v-icon></v-btn>
           </v-col>
           <v-col>
         <v-text-field
@@ -25,10 +25,10 @@
         </v-col>
         </v-row>
       </template>
-       <template v-slot:item.img="{ item }">
+       <template v-slot:item.whoiam.img="{ item }">
           <v-img
           width="80"
-      :src="item.img"
+      :src="item.whoiam.img"
     ></v-img>
       </template>
       <template v-slot:item.actions="{ item }">
@@ -42,11 +42,27 @@
       </v-btn>
     </template>
     </v-data-table>
+    <v-navigation-drawer
+      v-model="rightDrawer"
+      :right="right"
+      temporary
+      fixed
+      width="50%"
+    >
+    <MountingCard :newuserid.sync="newuserid" :rightDrawer.sync="rightDrawer" :mantazhnik.sync="mounter" />
+    <ModalChoise :newuserid.sync="newuserid"  :rightDrawer.sync="rightDrawer" :dialog.sync="dialog" />
+    </v-navigation-drawer>
     </div>
 </template>
 
 <script>
+import MountingCard from '@/components/MountimgCard.vue'
+import ModalChoise from '@/components/DialogMounters.vue'
 export default {
+    components:{
+       MountingCard,
+       ModalChoise
+    },
     data(){
         return{
              rightDrawer:false,
@@ -54,11 +70,14 @@ export default {
             page:1,
             count:0,
             options:{},
+            dialog:false,
             timer:null,
-            offset:10,
+            offset:0,
+            newuserid:null,
             loading:false,
             search:'',
             mounters:[],
+            mounter:{whoiam:{}, newuserid:this.newuserid},
             footerProps: {'items-per-page-options': [10, 25, 50, 100]},
         }
     },
@@ -70,11 +89,25 @@ export default {
         async getUserMounter(){
             this.loading = true;
             const { sortBy, sortDesc, page, itemsPerPage } = this.options;
+             this.offset = itemsPerPage*(page-1);
             let data = await this.$axios.get(`/mounters/mounters/?limit=${itemsPerPage}&offset=${this.offset}`);
             this.mounters = data.data.results;
             this.count = data.data.count;
             this.loading = false;
-        }
+        },
+        showCard(mounter){
+            this.mounter = mounter;
+            this.rightDrawer = true;
+        },
+        async searchMounters(newval){
+             this.loading = true;
+            const { sortBy, sortDesc, page, itemsPerPage } = this.options;
+             this.offset = itemsPerPage*(page-1);
+             let data = await this.$axios.get(`/mounters/mounters/?limit=${itemsPerPage}&offset=${this.offset}&search=${newval}`);
+           this.mounters = data.data.results;
+           this.count = data.data.count;
+           this.loading = false;
+        },
     },
     computed: {
       headers () {
@@ -85,14 +118,25 @@ export default {
             sortable: true,
             value: 'id',
           },
-          { text: 'имя', value: 'first_name' },
-          { text: 'фамилия', value: 'last_name' },
-          { text: 'email', value: 'email' },
-          { text: 'изображение', value: 'img' },
+          { text: 'имя', value: 'whoiam.first_name' },
+          { text: 'фамилия', value: 'whoiam.last_name' },
+         // { text: 'email', value: 'email' },
+          { text: 'изображение', value: 'whoiam.img' },
           { text: 'описание', value: 'description' },
           { text: 'действия', value: 'actions' },
         ]
       },
+    },
+    watch:{
+        search(newval){
+          if(newval==''){
+            if(this.timer!=null){clearTimeout(this.timer)}
+            this.getUserMounter()
+          }else{
+            if(this.timer!=null){clearTimeout(this.timer)}
+            this.timer = setTimeout( this.searchMounters,700,newval);
+          }
+        },
     },
 }
 </script>
