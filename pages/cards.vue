@@ -31,6 +31,9 @@
       :src="item.img"
     ></v-img>
       </template>
+      <template v-slot:item.description="{ item }">
+          {{item.description.length>300?item.description.substring(0,300):item.description}}
+      </template>
       <template v-slot:item.actions="{ item }">
      <v-btn @click="deleteCard(item)" class="error"> <v-icon light>
               mdi-delete-forever
@@ -48,7 +51,7 @@
       :right="right"
       temporary
       fixed
-      width="50%"
+      width="60%"
     >
     <changeCard :rightDrawer.sync="rightDrawer" :card.sync="card" :manufacturers="manufacturers" :currentCat="currentCat" :currentFirstCat="currentFirstCat" :cats_first="cats_first" :cats="cats" />
     </v-navigation-drawer>
@@ -166,6 +169,7 @@ export default {
             this.cats_first = data1.data.results;
             let data2 = await this.$axios.get(`/admin/catalog/manufacturers/?limit=99999999`); 
             this.manufacturers = data2.data.results;
+            let data3 = await this.$axios.get(`/admin/catalog/manufacturers/?limit=99999999`); 
         },
         async getCardProducts(){
             this.loading = true;
