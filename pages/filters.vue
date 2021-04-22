@@ -94,6 +94,15 @@ export default {
       },
     },
     watch:{
+      search(newval){
+          if(newval==''){
+            if(this.timer!=null){clearTimeout(this.timer)}
+            this.getFilterCats()
+          }else{
+            if(this.timer!=null){clearTimeout(this.timer)}
+            this.timer = setTimeout( this.searchFilter,700,newval);
+          }
+        },
         options: {
         handler () {
             
@@ -122,12 +131,20 @@ export default {
             let data1 = await this.$axios.get(`/admin/catalog/category_first/?limit=99999999`); 
             this.cats_first = data1.data.results;
       },
+      async searchFilter(str1){
+        this.loading = true;
+            const { sortBy, sortDesc, page, itemsPerPage } = this.options;
+             this.offset = itemsPerPage*(page-1);
+             let data = await this.$axios.get(`/admin/catalog/filter_card_group/?limit=${itemsPerPage}&offset=${this.offset}&search=${str1}`);
+           this.filters = data.data.results;
+           this.count = data.data.count;
+           this.loading = false;
+      },
         async getFilterCats(){
             this.loading = true;
             const { sortBy, sortDesc, page, itemsPerPage } = this.options;
              this.offset = itemsPerPage*(page-1);
            let data = await this.$axios.get(`/admin/catalog/filter_card_group/?limit=${itemsPerPage}&offset=${this.offset}`);
-           console.log(data);
            this.filters = data.data.results;
            this.count = data.data.count;
            this.loading = false;
