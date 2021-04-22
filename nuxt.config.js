@@ -44,7 +44,7 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     proxy: false,
-    baseURL: "http://178.172.173.172:8001"
+    baseURL: "http://178.172.173.172:8001",
    // baseURL: "http://178.172.173.172:8001"
     //baseURL:"http://192.168.100.73:8000"
   },
@@ -73,6 +73,11 @@ export default {
       home: '/',
       callback: false,
       logout: '/login'
+    },
+    cookie:{
+      option:{
+        maxAge:60*60*8,
+      }
     }
   },
 

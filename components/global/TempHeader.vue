@@ -91,6 +91,11 @@ export default {
           to: '/category'
         },
         {
+          icon: 'mdi-filter',
+          title: 'Фильтра',
+          to: '/filters'
+        },
+        {
           icon: 'mdi-factory',
           title: 'Производители',
           to: '/factory'
