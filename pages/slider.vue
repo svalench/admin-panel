@@ -31,6 +31,14 @@
       :src="item.img"
     ></v-img>
       </template>
+      <template v-slot:item.show="{ item }">
+          <v-chip
+        :color="item.show?'green':'yellow'"
+        dark
+      >
+        {{ item.show?'Да':'нет' }}
+      </v-chip>
+      </template>
       <template v-slot:item.actions="{ item }">
      <v-btn @click="deleteItem(item)" class="error"> <v-icon light>
               mdi-delete-forever
@@ -91,6 +99,7 @@ export default {
           },
           { text: 'описание', value: 'description' },
           { text: 'изображение', value: 'img' },
+          { text: 'на главной', value: 'show' },
           { text: 'действия', value: 'actions' },
         ]
       },
