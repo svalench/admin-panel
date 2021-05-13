@@ -137,7 +137,6 @@ export default {
             const { sortBy, sortDesc, page, itemsPerPage } = this.options;
              this.offset = itemsPerPage*(page-1);
            let data = await this.$axios.get(`/admin/catalog/manufacturers/?limit=${itemsPerPage}&offset=${this.offset}`);
-           console.log(data);
            this.manufacturers = data.data.results;
            this.count = data.data.count;
            this.loading = false;
@@ -147,7 +146,6 @@ export default {
             const { sortBy, sortDesc, page, itemsPerPage } = this.options;
              this.offset = itemsPerPage*(page-1);
            let data = await this.$axios.get(`/admin/catalog/manufacturers/?limit=${itemsPerPage}&offset=${this.offset}&search=${search}`);
-           console.log(data);
            this.manufacturers = data.data.results;
            this.count = data.data.count;
            this.loading = false;
