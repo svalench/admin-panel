@@ -47,6 +47,12 @@
      </div>
 
       <div v-else>{{factory.description?factory.description:'No description'}}  <v-icon @click="changeRow.description=true">mdi-lead-pencil</v-icon></div>
+    <div>
+      <v-checkbox
+      v-model="factory.show_in_start"
+      :label="`Показывать на главной -  ${factory.show_in_start?'да':'нет'}`"
+    ></v-checkbox>
+    </div>
     </v-card-text>
     </v-col>
     </v-row>
@@ -103,6 +109,7 @@ export default {
             if(this.factory.id==undefined){
                 let formData = new FormData();
                  formData.append('img', this.files);
+                 formData.append('show_in_start', this.factory.show_in_start);
                  formData.append('name', this.factory.name);
                  formData.append('description', this.factory.description);
                await this.$axios.post(`/admin/catalog/manufacturers/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
@@ -113,6 +120,7 @@ export default {
                     formData.append('img', this.files);
                 }
                  formData.append('name', this.factory.name);
+                 formData.append('show_in_start', this.factory.show_in_start);
                  formData.append('description', this.factory.description);
                 this.$axios.put(`/admin/catalog/manufacturers/${this.factory.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
             
