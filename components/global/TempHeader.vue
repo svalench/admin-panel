@@ -81,7 +81,7 @@ export default {
           to: '/'
         },
         {
-          icon: 'mdi-account-box-multiple',
+          icon: 'mdi-play-box-outline',
           title: 'Слайдер',
           to: '/slider'
         },
