@@ -82,6 +82,11 @@ export default {
         },
         {
           icon: 'mdi-account-box-multiple',
+          title: 'Слайдер',
+          to: '/slider'
+        },
+        {
+          icon: 'mdi-account-box-multiple',
           title: 'Пользоатели',
           to: '/usersList'
         },
