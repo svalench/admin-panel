@@ -25,6 +25,14 @@
                                     :value="addCat.description"
                                     ></v-textarea>
                             </v-col>
+                            <v-col>
+                                <div>
+                                    <v-checkbox
+                                    v-model="addCat.show_in_start"
+                                    :label="`Показывать на главной -  ${addCat.show_in_start?'да':'нет'}`"
+                                    ></v-checkbox>
+                                </div>
+                            </v-col>
                             <v-col><v-row><v-col cols="2"><v-icon @click="addGlobalCatFunc()">mdi-check-bold</v-icon></v-col> <v-col><v-icon @click="addGlobalCat=false">mdi-minus</v-icon></v-col></v-row></v-col>
                        </v-row>
                    </v-col>
@@ -38,6 +46,13 @@
         <template v-slot:activator>
           <v-list-item-content>
             <v-list-item-title v-text="item.name"></v-list-item-title>
+            <div>
+                <v-checkbox
+                @change="changeShowInStart(item)"
+                v-model="item.show_in_start"
+                :label="`Показывать на главной -  ${item.show_in_start?'да':'нет'}`"
+                ></v-checkbox>
+            </div>
           </v-list-item-content>
         </template>
         <v-list-item-action>
@@ -105,7 +120,7 @@ export default {
             updGlobalCat:false,
             updSecondCat:false,
             addSecondCat:false,
-            addCat:{name:'',title:'',description:''},
+            addCat:{name:'',title:'',description:'',show_in_start:false},
             addSecondCatObj:{name:'',title:'',description:''},
         }
     },
@@ -114,6 +129,9 @@ export default {
     },
 
     methods:{
+        async changeShowInStart(cat){
+            await this.$axios.put(`/admin/catalog/category_first/${cat.id}/`, {"show_in_start":cat.show_in_start,"name":cat.name});
+        },
         updateFirstCat(item){
             this.addGlobalCat = !this.addGlobalCat;
             this.updGlobalCat = true;
@@ -134,7 +152,7 @@ export default {
             }else{
            await this.$axios.post('/admin/catalog/category_first/', this.addCat);
            this.categories.push(this.addCat);
-           this.addCat={name:'',title:'',description:''};
+           this.addCat={name:'',title:'',description:'',show_in_start:false};
            this.addGlobalCat = false;
             }
         },
