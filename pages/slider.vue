@@ -101,6 +101,7 @@ export default {
           { text: 'изображение', value: 'img' },
           { text: 'на главной', value: 'show' },
           { text: 'действия', value: 'actions' },
+          { text: 'позиция', value: 'position' },
         ]
       },
     },

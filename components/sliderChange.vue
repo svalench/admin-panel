@@ -34,9 +34,11 @@
                             :label="`Показывать на главной -  ${slider.show?'да':'нет'}`"
                             ></v-checkbox>
                     </v-row>
+                    <v-row>
+                        <v-col>
+                    <v-text-field v-model="slider.position" :value="slider.position"  label="Позиция"></v-text-field>
                 </v-col>
-                <v-col>
-                    <v-text-field v-model="addCat.position" :value="addCat.position"  label="Позиция"></v-text-field>
+                    </v-row>
                 </v-col>
             </v-row>
             <v-divider class="mx-4"></v-divider>
