@@ -35,6 +35,9 @@
                             ></v-checkbox>
                     </v-row>
                 </v-col>
+                <v-col>
+                    <v-text-field v-model="addCat.position" :value="addCat.position"  label="Позиция"></v-text-field>
+                </v-col>
             </v-row>
             <v-divider class="mx-4"></v-divider>
     <v-card-actions>
@@ -72,6 +75,7 @@ export default {
                  formData.append('img', this.files);
                  formData.append('show', this.slider.show?true:false);
                  formData.append('title', this.slider.title);
+                 formData.append('position', this.slider.position);
                  formData.append('description', this.slider.description);
                await this.$axios.post(`/admin/pages/slider/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
             }else{
@@ -82,6 +86,7 @@ export default {
                 }
                  formData.append('title', this.slider.title);
                  formData.append('show', this.slider.show);
+                 formData.append('position', this.slider.position);
                  formData.append('description', this.slider.description);
                 this.$axios.put(`/admin/pages/slider/${this.slider.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
             
