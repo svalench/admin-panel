@@ -33,6 +33,14 @@
                                     ></v-checkbox>
                                 </div>
                             </v-col>
+                            <v-col>
+                                <v-file-input
+                                    hide-input
+                                    chips
+                                    v-model="files"
+                                    truncate-length="15"
+                                    ></v-file-input>
+                            </v-col>
                             <v-col><v-row><v-col cols="2"><v-icon @click="addGlobalCatFunc()">mdi-check-bold</v-icon></v-col> <v-col><v-icon @click="addGlobalCat=false">mdi-minus</v-icon></v-col></v-row></v-col>
                        </v-row>
                    </v-col>
@@ -45,14 +53,24 @@
       >
         <template v-slot:activator>
           <v-list-item-content>
+              
             <v-list-item-title v-text="item.name"></v-list-item-title>
-            <div>
+            <v-row>
+                  <v-col>
+                      <div>
                 <v-checkbox
                 @change="changeShowInStart(item)"
                 v-model="item.show_in_start"
                 :label="`Показывать на главной -  ${item.show_in_start?'да':'нет'}`"
                 ></v-checkbox>
             </div>
+                  </v-col>
+                  <v-col>
+                      <v-img :src="item.img" max-height="100" max-width="100" >
+                      </v-img>
+                  </v-col>
+              </v-row>
+            
           </v-list-item-content>
         </template>
         <v-list-item-action>
@@ -80,6 +98,7 @@
                                     :value="addSecondCatObj.description"
                                     ></v-textarea>
                             </v-col>
+                            
                             <v-col><v-row><v-col cols="3"><v-icon @click="addSecondCatFunc(item)">mdi-check-bold</v-icon></v-col> <v-col><v-icon @click="addSecondCat=false">mdi-minus</v-icon></v-col></v-row></v-col>
                             
                        </v-row></div>  
@@ -114,6 +133,7 @@
 export default {
     data(){
         return{
+            files:[],
             categories:[],
             loading:false,
             addGlobalCat:false,
@@ -143,14 +163,27 @@ export default {
             this.addSecondCatObj = child;
         },
         async addGlobalCatFunc(){
-            if(this.updGlobalCat){
-                delete this.addCat.img;
-                await this.$axios.put(`/admin/catalog/category_first/${this.addCat.id}/`, this.addCat);
+             let formData = new FormData();
+           if(this.files.name!=undefined){
+                    formData.append('img', this.files);
+                    var reader = new FileReader();
+                    reader.addEventListener("load", function () {
+                      this.imagePreview = reader.result;
+                       this.addCat.img = this.imagePreview;
+                    }.bind(this), false);
+                     reader.readAsDataURL( this.files );
+                }
+                formData.append('name', this.addCat.name);
+                formData.append('title', this.addCat.title);
+                formData.append('description', this.addCat.description);
+                formData.append('show_in_start', this.addCat.show_in_start==undefined?false:this.addCat.show_in_start);
+            if(this.updGlobalCat){;
+                await this.$axios.put(`/admin/catalog/category_first/${this.addCat.id}/`, formData,{headers: {'Content-Type': 'multipart/form-data'}});
                 this.updGlobalCat = false;
                 this.addCat={name:'',title:'',description:''};
                 this.addGlobalCat = false;
             }else{
-           await this.$axios.post('/admin/catalog/category_first/', this.addCat);
+           await this.$axios.post('/admin/catalog/category_first/', formData,{headers: {'Content-Type': 'multipart/form-data'}});
            this.categories.push(this.addCat);
            this.addCat={name:'',title:'',description:'',show_in_start:false};
            this.addGlobalCat = false;

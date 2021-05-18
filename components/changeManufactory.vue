@@ -27,7 +27,7 @@
     </v-col>
     <v-col>
  
-    <v-card-title  v-if="changeRow.name">{{factory.name}}<v-icon @click="changeRow.name=false">mdi-lead-pencil</v-icon></v-card-title>
+    <v-card-title  v-if="!changeRow.name">{{factory.name}}<v-icon @click="changeRow.name=false">mdi-lead-pencil</v-icon></v-card-title>
         <v-card-title v-else>
             <v-text-field v-model="factory.name" :value="factory.name" label="название"></v-text-field>
         <v-icon @click="changeRow.name=true">mdi-check-bold</v-icon>
@@ -86,7 +86,7 @@ export default {
         return{
             files:[],
             loading:false,
-             changeRow:{name:true, description:false, nikname:false, email:false},
+             changeRow:{name:false, description:false, nikname:false, email:false},
         }
     },
     props:['factory','rightDrawer'],
@@ -94,14 +94,24 @@ export default {
     },
     watch:{
         rightDrawer(newval){
-           if(newval && this.factory=={}){
+           if(newval && this.factory['id']==undefined){
                 for(let i in this.changeRow){
-                    this.changeRow[i] = !this.changeRow[i];
+                    this.changeRow[i] = true;
+                }
+           }else{
+             for(let i in this.changeRow){
+                    this.changeRow[i] = false;
                 }
            }
         },
+      // factory(n,o){
+      //   if(n['id']==undefined){
+      //     for(let i in this.changeRow){
+      //               this.changeRow[i] = !this.changeRow[i];
+      //           }
+      //   }
+      // },
         files(newval){
-               console.log(newval);
            }
     },
     methods:{
@@ -109,7 +119,7 @@ export default {
             if(this.factory.id==undefined){
                 let formData = new FormData();
                  formData.append('img', this.files);
-                 formData.append('show_in_start', this.factory.show_in_start);
+                 formData.append('show_in_start', this.factory.show_in_start==undefined?false:this.factory.show_in_start);
                  formData.append('name', this.factory.name);
                  formData.append('description', this.factory.description);
                await this.$axios.post(`/admin/catalog/manufacturers/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
@@ -120,7 +130,7 @@ export default {
                     formData.append('img', this.files);
                 }
                  formData.append('name', this.factory.name);
-                 formData.append('show_in_start', this.factory.show_in_start);
+                 formData.append('show_in_start', this.factory.show_in_start==undefined?false:this.factory.show_in_start);
                  formData.append('description', this.factory.description);
                 this.$axios.put(`/admin/catalog/manufacturers/${this.factory.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
             

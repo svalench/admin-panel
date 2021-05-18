@@ -17,10 +17,16 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
+    'quill/dist/quill.core.css',
+    // for snow theme
+    'quill/dist/quill.snow.css',
+    // for bubble theme
+    'quill/dist/quill.bubble.css'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    { src: '~plugins/nuxt-quill-plugin', ssr: false },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -43,9 +49,9 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    proxy: false,
+     proxy: false,
    // baseURL: "http://178.172.173.172:8001",
-    baseURL: "https://new.arhiterm.by"
+    baseURL: "https://new.arhiterm.by/"
     //baseURL:"http://192.168.100.73:8000"
   },
 

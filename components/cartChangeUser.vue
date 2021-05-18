@@ -151,18 +151,7 @@ export default {
     methods:{
       previewLoad(){
         if(this.user.id==undefined){
-          this.user.img= URL.createObjectURL(this.files)              
-                    // var reader = new FileReader();
-                    // reader.addEventListener("load", function () {
-                    //   console.log(reader);
-                    //   this.imagePreview = reader.result;
-                    //   this.user.img = this.imagePreview;
-                    // }.bind(this), false);
-                    // try{
-                    //      reader.readAsDataURL( this.files );
-                    // }catch{
-
-                    // }
+          this.user.img= URL.createObjectURL(this.files)
                     
             }
       },

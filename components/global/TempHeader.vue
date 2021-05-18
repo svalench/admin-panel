@@ -81,6 +81,11 @@ export default {
           to: '/'
         },
         {
+          icon: 'mdi-book-open-page-variant',
+          title: 'Контент на главной',
+          to: '/contentIndex'
+        },
+        {
           icon: 'mdi-play-box-outline',
           title: 'Слайдер',
           to: '/slider'
