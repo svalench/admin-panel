@@ -53,7 +53,7 @@
       >
         <template v-slot:activator>
           <v-list-item-content>
-              
+
             <v-list-item-title v-text="item.name"></v-list-item-title>
             <v-row>
                   <v-col>
@@ -70,7 +70,7 @@
                       </v-img>
                   </v-col>
               </v-row>
-            
+
           </v-list-item-content>
         </template>
         <v-list-item-action>
@@ -78,6 +78,7 @@
                 <div><v-row>
                     <v-col><v-btn @click="addSecondCat=!addSecondCat;addSecondCatObj={name:'',title:'',description:''};" class="accent"><v-icon >mdi-playlist-plus</v-icon></v-btn></v-col>
                     <v-col ><v-btn @click="updateFirstCat(item)" class="pink darken-3"><v-icon >mdi-open-in-app</v-icon></v-btn></v-col>
+                  <v-col><v-btn @click="deleteFirstCat(item)" class="error"><v-icon >mdi-playlist-minus</v-icon></v-btn></v-col>
                 </v-row></div>
             </template>
         </v-list-item-action>
@@ -98,10 +99,10 @@
                                     :value="addSecondCatObj.description"
                                     ></v-textarea>
                             </v-col>
-                            
+
                             <v-col><v-row><v-col cols="3"><v-icon @click="addSecondCatFunc(item)">mdi-check-bold</v-icon></v-col> <v-col><v-icon @click="addSecondCat=false">mdi-minus</v-icon></v-col></v-row></v-col>
-                            
-                       </v-row></div>  
+
+                       </v-row></div>
                 </template>
         </v-list-item-action>
         <div  v-if="item.child">
@@ -118,7 +119,7 @@
                      <v-col><v-btn @click="deleteSecondCat(item, child)" class="error"><v-icon >mdi-playlist-minus</v-icon></v-btn></v-col>
                      <v-col ><v-btn @click="updateSecondCat(item, child)" class="pink darken-3"><v-icon >mdi-open-in-app</v-icon></v-btn></v-col>
                 </v-row>
-                    
+
                 </template>
             </v-list-item-title>
           </v-list-item-content>
@@ -149,14 +150,38 @@ export default {
     },
 
     methods:{
+      /**
+       *  изменяет флаг видимости на стартовой
+       * @param cat сущнсть категории
+       * @returns {Promise<void>}
+       */
         async changeShowInStart(cat){
             await this.$axios.put(`/admin/catalog/category_first/${cat.id}/`, {"show_in_start":cat.show_in_start,"name":cat.name});
         },
+      /**
+       *  видиость полей для обновления глобальной кагории
+       * @param item сущнсть категории
+       */
         updateFirstCat(item){
             this.addGlobalCat = !this.addGlobalCat;
             this.updGlobalCat = true;
             this.addCat = item;
         },
+      /**
+       * удобяел категорию
+       * @param item сущнсть категории
+       * @returns {Promise<void>}
+       */
+      async deleteFirstCat(item){
+        if(!confirm("Вы уверены что хотите удалить категорию?")){return }
+          await this.$axios.delete(`/admin/catalog/category_first/${item.id}/`);
+          this.categories.splice(this.categories.findIndex(x=>x.id==item.id),1)
+      },
+      /**
+       * поля для обновления вторичной категории
+       * @param item сущнсть категории
+       * @param child сущнсть категории вложенной
+       */
          updateSecondCat(item, child){
              this.addSecondCat = !this.addSecondCat;
             this.updSecondCat = true;
@@ -183,13 +208,14 @@ export default {
                 this.addCat={name:'',title:'',description:''};
                 this.addGlobalCat = false;
             }else{
-           await this.$axios.post('/admin/catalog/category_first/', formData,{headers: {'Content-Type': 'multipart/form-data'}});
-           this.categories.push(this.addCat);
+           let data = await this.$axios.post('/admin/catalog/category_first/', formData,{headers: {'Content-Type': 'multipart/form-data'}});
+           this.categories.push(data.data);
            this.addCat={name:'',title:'',description:'',show_in_start:false};
            this.addGlobalCat = false;
             }
         },
         async deleteSecondCat(item,child){
+           if(!confirm("Вы уверены что хотите удалить категорию?")){return }
             await this.$axios.delete(`/admin/catalog/category_second/${child.id}/`);
             const index = this.categories.indexOf(item);
            const index_child =this.categories[index].child.indexOf(child);
