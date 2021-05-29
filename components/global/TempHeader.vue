@@ -46,7 +46,7 @@
       </v-btn>
       <v-toolbar-title v-text="title" />
       <v-spacer />
-      <v-btn @click="logout">Выйти</v-btn>
+      <v-btn @click="logout"><v-icon>mdi-logout</v-icon></v-btn>
     </v-app-bar>
      <v-navigation-drawer
       v-model="rightDrawer"
