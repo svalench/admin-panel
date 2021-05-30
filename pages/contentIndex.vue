@@ -54,6 +54,9 @@ export default {
       this.getData();
   },
   methods: {
+    /**
+     *  получение данных с сервера
+     */
       async getData() {
         let data = {}
         try {
@@ -77,6 +80,9 @@ export default {
       this.content=data;
       this.activeKey = args;
     },
+    /**
+     * бнолвение данных по изменению картинки
+     */
     async updateImg(form){
         form.append('title',this.data[0].title)
         form.append('h1',this.data[0].h1)
@@ -85,6 +91,11 @@ export default {
         form.append('description',this.data[0].description)
       let res = await this.$axios.put('/admin/pages/pages/1/',form);
     },
+    /**
+     * бновление даныых на сервере
+     * @param data даннве поля
+     * @returns {Promise<void>}
+     */
     async updateData(data){
       console.log(this.activeKey)
       this.data[0][this.activeKey] = data;
