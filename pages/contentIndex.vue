@@ -3,73 +3,98 @@
     <v-row>
     <section class="container">
     <client-only>
-      <quill-editor
-        ref="editor"
-        v-model="content"
-        :options="editorOption"
-        @blur="onEditorBlur($event)"
-        @focus="onEditorFocus($event)"
-        @ready="onEditorReady($event)"
-      />
+      <text-editor @updateText="updateData" :content.sync="content" ></text-editor>
     </client-only>
     </section>
     </v-row>
     <hr height="80" style="margin-top:1%;">
-    <v-row v-for="i in data" :key="i.id">
-        <section style="margin-top:1%;">
-            <v-row>
-                <v-col>{{i.title}}</v-col>
-                <v-col>{{i.h1}}</v-col>
-                <v-col>{{i.h5}}</v-col>
-            </v-row>
-            <hr height="50" style="margin-top:1%;">
-            <v-row>
-                <v-col>{{i.title_block}}</v-col>
-                <v-col>{{i.description}}</v-col>
-                <v-col><v-img :src="i.img"></v-img></v-col>
-            </v-row>
-        </section>
+  <div v-for="i in data" :key="i.id">
+    <v-row >
+
+    <v-col>
+        <card-component @updateData="setData" :title="'Название'" :inObj="'title'" :text.sync="i.title" :btns="cardBtns"/>
+    </v-col>
+    <v-col>
+      <card-component @updateData="setData" :title="'H1 текст'" :inObj="'h1'" :text.sync="i.h1"  :btns="cardBtns"/>
+    </v-col>
     </v-row>
+    <v-row>
+    <v-col>
+      <card-component @updateData="setData" :title="'H5 текст'" :inObj="'h5'" :text.sync="i.h5" :btns="cardBtns"/>
+    </v-col>
+      </v-row>
+    <v-row>
+      <contentPreview @updateImg="updateImg" @updateData="setData" :action="'updateData'" :title.sync="i.title_block" :text.sync="i.description" :img="i.img" />
+    </v-row>
+    </div>
     </div>
 </template>
 
 <script>
+
+import textEditor from "~/components/global/textEditor";
+import cardComponent from "~/components/cardComponent";
+import contentPreview from "~/components/contentPreview";
 export default {
+  components:{
+    textEditor,
+    cardComponent,
+    contentPreview,
+  },
     data(){
         return{
-            data:[{     "id":0,
-                        "title": "dsfg sdf sd fsd",
-                        "h1": "sd fsdf sdf asdf asdf sadf sadf sdf sd fsadf sadf sda f",
-                        "h5": "asdf asdf sdf sadf asdf sad fsadf ",
-                        "bg_color": " asdf sad fsdfsdf sad f",
-                        "title_block": "as dfasdf sda fs",
-                        "description": "as dfasdf sad fsadf sa fasd",
-                        "img": "",
-                        "active": true,
-            }],
-            content: '',
-        editorOption: {
-          // Some Quill options...
-          theme: 'snow',
-          modules: {
-        //     toolbar: [
-        //       ['bold', 'italic', 'underline', 'strike'],
-        //       ['blockquote', 'code-block']
-        //     ]
-          }
-        }
+          cardBtns:[{text: 'Изменить', action: 'updateData',key:'text', color: 'orange'}],
+          data:[],
+          activeKey:null,
+          content: '',
+
         }
     },
-    methods: {
-      onEditorBlur(editor) {
-        console.log('editor blur!', editor)
+  mounted() {
+      this.getData();
+  },
+  methods: {
+      async getData() {
+        let data = {}
+        try {
+         data = await this.$axios.get('/admin/pages/pages/1');
+      }catch(e){
+          console.error(e);
+          console.log(await this.$axios.post('/admin/pages/pages/',
+            {"title": "First Start",
+                  "h1": "First Start",
+                  "h5": "First Start",
+                  "bg_color": "#000000",
+                  "title_block": "First Start",
+                  "description": "First Start"
+            }));
+           data = await this.$axios.get('/admin/pages/pages/1');
+        }
+        console.log(data)
+        this.data = [data.data];
       },
-      onEditorFocus(editor) {
-        console.log('editor focus!', editor)
-      },
-      onEditorReady(editor) {
-        console.log('editor ready!', editor)
+    setData(data,args){
+      this.content=data;
+      this.activeKey = args;
+    },
+    async updateImg(form){
+        form.append('title',this.data[0].title)
+        form.append('h1',this.data[0].h1)
+        form.append('h5',this.data[0].h5)
+        form.append('title_block',this.data[0].title_block)
+        form.append('description',this.data[0].description)
+      let res = await this.$axios.put('/admin/pages/pages/1/',form);
+    },
+    async updateData(data){
+      console.log(this.activeKey)
+      this.data[0][this.activeKey] = data;
+      try {
+        delete(this.data[0].img)
+        let res = await this.$axios.put('/admin/pages/pages/1/',this.data[0]);
+      }catch (e){
+        alert(e);
       }
+    }
     }
 }
 </script>
