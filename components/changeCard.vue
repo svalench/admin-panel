@@ -54,7 +54,7 @@
   </v-file-input>
     </v-col>
     <v-col>
- 
+
     <v-card-title  v-if="changeRow.name">{{card.name}}<v-icon @click="changeRow.name=false">mdi-lead-pencil</v-icon></v-card-title>
         <v-card-title v-else>
             <v-text-field v-model="card.name" :value="card.name" label="название"></v-text-field>
@@ -62,6 +62,9 @@
         </v-card-title>
         <v-card-title>
             <v-text-field v-model="card.s1_id" :value="card.s1_id" label="id в 1С"></v-text-field>
+        </v-card-title>
+      <v-card-title>
+            <v-text-field v-model="card.discont" :value="card.discont" label="Скидка"></v-text-field>
         </v-card-title>
         <v-card-title>
         <v-select
@@ -124,7 +127,6 @@
         ></v-select>
     </v-card-title>
     <v-card-text>
-
 <div v-if="changeRow.description">
     <v-textarea
           outlined
@@ -142,7 +144,7 @@
     </v-row>
 
     <v-divider class="mx-4"></v-divider>
-   
+
 
     <v-divider class="mx-4"></v-divider>
     <v-card-actions>
@@ -198,18 +200,18 @@ export default {
              this.filters_value.push({values:a.filter_value,name:a.name});
           }
         }
-       // this.filters_value = 
+       // this.filters_value =
       },
         select_cat(newval){
             this.second_arr = this.cats.filter(x=>x.parent==newval);
-            
+
         },
         select_cat_second(newval){
            let a = this.cats.filter(x=>x.id==newval)[0];
            a!=undefined? this.filters =  a.filters_list:[];
         },
         rightDrawer(newval){
-           
+
             if(!newval){
                this.filters_select =[];
                this.group_filter = [];
@@ -220,7 +222,7 @@ export default {
                 this.imagePreview = null;
             }else{
                 if(this.currentCat!=null){
-                  this.filters_select = this.card.filters;                  
+                  this.filters_select = this.card.filters;
                     this.second_arr = this.cats.filter(x=>x.parent==this.currentFirstCat.id);
                     this.select_cat_second=this.currentCat.id;
                     let a = this.cats.filter(x=>x.id==newval)[0];
@@ -234,16 +236,16 @@ export default {
                         }catch{
                              this.group_filter=[];
                         }
-                        
+
                         this.group_filter = [... new Set(this.group_filter)]
                       }
                     }
                 }else{
                     this.select_cat_second=undefined;
                 }
-                this.currentFirstCat!=null?this.select_cat=this.currentFirstCat:this.select_cat=undefined;  
+                this.currentFirstCat!=null?this.select_cat=this.currentFirstCat:this.select_cat=undefined;
             }
-           
+
         }
     },
     methods:{
@@ -265,7 +267,7 @@ export default {
                       this.card.img = this.imagePreview;
                     }.bind(this), false);
                      reader.readAsDataURL( this.files );
-                    
+
                 }else{
                  // delete this.card.img;
                 }
@@ -279,6 +281,7 @@ export default {
                 }
                  formData.append('name', this.card.name);
                  formData.append('cat', this.card.cat);
+                 formData.append('discont', this.card.discont);
                  formData.append('s1_id', this.card.s1_id);
                  formData.append('description', this.card.description);
            await this.$axios.put(`/admin/catalog/cardproduct_admin/${this.card.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
@@ -289,7 +292,7 @@ export default {
                 imgForm.append('parent', this.card.id);
               await this.$axios.post('/admin/catalog/cardproduct_img_admin/',imgForm);
               }
-              
+
 
            }
             this.$emit('update:rightDrawer', false)
