@@ -64,8 +64,19 @@
             <v-text-field v-model="card.s1_id" :value="card.s1_id" label="id в 1С"></v-text-field>
         </v-card-title>
       <v-card-title>
-            <v-text-field v-model="card.discont" :value="card.discont" label="Скидка"></v-text-field>
+            <v-text-field v-model="card.discont" :value="card.discont?card.discont:card.discont=0" label="Скидка"></v-text-field>
         </v-card-title>
+          <v-card-title>
+        <v-select
+        v-model="card.filter_id_show"
+          :items="raw_check"
+          item-text="name"
+          item-value="id"
+          label="Что выводим в чекбоксах"
+          dense
+          outlined
+        ></v-select>
+    </v-card-title>
         <v-card-title>
         <v-select
         v-model="select_manuf"
@@ -172,7 +183,9 @@ export default {
         return{
           files:[],
           file1:'',
+          select_raw_check:null,
           filters:[],
+          raw_check:[],
           files_slider: [],
           filters_value:[],
           group_filter:[],
@@ -213,6 +226,8 @@ export default {
         rightDrawer(newval){
 
             if(!newval){
+              this.raw_check=[];
+              this.select_raw_check=null;
                this.filters_select =[];
                this.group_filter = [];
                 this.files_slider =[];
@@ -222,11 +237,15 @@ export default {
                 this.imagePreview = null;
             }else{
                 if(this.currentCat!=null){
+                  if(this.card.product.length){
+                    this.raw_check = this.card.product[0].filter_dict;
+                  }
+
                   this.filters_select = this.card.filters;
-                    this.second_arr = this.cats.filter(x=>x.parent==this.currentFirstCat.id);
+                    this.second_arr = this.cats.filter(x=>x.parent===this.currentFirstCat.id);
                     this.select_cat_second=this.currentCat.id;
-                    let a = this.cats.filter(x=>x.id==newval)[0];
-                    a!=undefined? this.filters =  a.filters_list:[];
+                    let a = this.cats.filter(x=>x.id===newval)[0];
+                    a!==undefined? this.filters =  a.filters_list:[];
                     this.filters =  this.cats.filter(x=>x.id==newval)[0].filters_list;
                    if(this.card.filters.length>0){
                       for(let a of this.card.filters){
@@ -282,6 +301,7 @@ export default {
                  formData.append('name', this.card.name);
                  formData.append('cat', this.card.cat);
                  formData.append('discont', this.card.discont);
+                 formData.append('filter_id_show', this.card.filter_id_show);
                  formData.append('s1_id', this.card.s1_id);
                  formData.append('description', this.card.description);
            await this.$axios.put(`/admin/catalog/cardproduct_admin/${this.card.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});

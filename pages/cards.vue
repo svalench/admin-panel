@@ -7,7 +7,7 @@
       :server-items-length="count"
        :options.sync="options"
       :loading ="loading"
-      :footer-props="footerProps"   
+      :footer-props="footerProps"
       class="elevation-1"
 
     >
@@ -122,7 +122,7 @@ export default {
         },
         options: {
         handler () {
-            
+
           this.getCardProducts()
         },
         deep: true,
@@ -148,10 +148,10 @@ export default {
                  this.currentCat = this.cats.find(x=>x.id==this.card.cat);
                  this.currentFirstCat = this.cats_first.find(x=>x.id==this.currentCat.parent);
             }else{
-                 this.currentCat = null; 
+                 this.currentCat = null;
                  this.currentFirstCat = null;
             }
-           
+
         },
         async searchLoadData(newval){
            this.loading = true;
@@ -163,13 +163,13 @@ export default {
            this.loading = false;
         },
         async getCatAll(){
-            let data = await this.$axios.get(`/admin/catalog/category_second/?limit=99999999`); 
+            let data = await this.$axios.get(`/admin/catalog/category_second/?limit=99999999`);
             this.cats = data.data.results;
-            let data1 = await this.$axios.get(`/admin/catalog/category_first/?limit=99999999`); 
+            let data1 = await this.$axios.get(`/admin/catalog/category_first/?limit=99999999`);
             this.cats_first = data1.data.results;
-            let data2 = await this.$axios.get(`/admin/catalog/manufacturers/?limit=99999999`); 
+            let data2 = await this.$axios.get(`/admin/catalog/manufacturers/?limit=99999999`);
             this.manufacturers = data2.data.results;
-            let data3 = await this.$axios.get(`/admin/catalog/manufacturers/?limit=99999999`); 
+            let data3 = await this.$axios.get(`/admin/catalog/manufacturers/?limit=99999999`);
         },
         async getCardProducts(){
             this.loading = true;
