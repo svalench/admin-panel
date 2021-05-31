@@ -26,7 +26,7 @@
     </v-img>
     </v-col>
     <v-col>
- 
+
     <v-card-title  v-if="!changeRow.name">{{factory.name}}<v-icon @click="changeRow.name=false">mdi-lead-pencil</v-icon></v-card-title>
         <v-card-title v-else>
             <v-text-field v-model="factory.name" :value="factory.name" label="название"></v-text-field>
@@ -54,11 +54,23 @@
     ></v-checkbox>
     </div>
     </v-card-text>
+      <v-card-title >
+        <v-select
+        v-model="factory.cats"
+        :items="cats"
+          item-text="name"
+          item-value="id"
+          label="Категории"
+          chips
+            multiple
+          outlined
+        ></v-select>
+    </v-card-title>
     </v-col>
     </v-row>
 
     <v-divider class="mx-4"></v-divider>
-   
+
 
     <v-divider class="mx-4"></v-divider>
     <v-card-actions>
@@ -84,6 +96,7 @@
 export default {
     data(){
         return{
+          cats:[],
             files:[],
             loading:false,
              changeRow:{name:false, description:false, nikname:false, email:false},
@@ -94,10 +107,15 @@ export default {
     },
     watch:{
         rightDrawer(newval){
+          if(newval){
+            this.getCats();
+            console.log(this.factory)
+          }
            if(newval && this.factory['id']==undefined){
                 for(let i in this.changeRow){
                     this.changeRow[i] = true;
                 }
+
            }else{
              for(let i in this.changeRow){
                     this.changeRow[i] = false;
@@ -121,6 +139,10 @@ export default {
                  formData.append('img', this.files);
                  formData.append('show_in_start', this.factory.show_in_start==undefined?false:this.factory.show_in_start);
                  formData.append('name', this.factory.name);
+                 for(let i of this.factory.cats){
+                   formData.append('cats', i);
+                 }
+
                  formData.append('description', this.factory.description);
                await this.$axios.post(`/admin/catalog/manufacturers/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
             }else{
@@ -130,16 +152,24 @@ export default {
                     formData.append('img', this.files);
                 }
                  formData.append('name', this.factory.name);
+                for(let i of this.factory.cats){
+                   formData.append('cats', i);
+                 }
                  formData.append('show_in_start', this.factory.show_in_start==undefined?false:this.factory.show_in_start);
                  formData.append('description', this.factory.description);
                 this.$axios.put(`/admin/catalog/manufacturers/${this.factory.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
-            
+
             }
             this.$emit('update:rightDrawer', false)
         },
         close(){
             this.$emit('update:rightDrawer', false)
         },
+      async getCats(){
+        let data = await this.$axios('/admin/catalog/category_first/?limit=99999999');
+        console.log(data);
+        this.cats = data.data.results;
+      }
 
     },
 }
