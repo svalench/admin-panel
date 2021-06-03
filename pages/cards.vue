@@ -53,7 +53,7 @@
       fixed
       width="60%"
     >
-    <changeCard :rightDrawer.sync="rightDrawer" :card.sync="card" :manufacturers="manufacturers" :currentCat="currentCat" :currentFirstCat="currentFirstCat" :cats_first="cats_first" :cats="cats" />
+    <changeCard :rightDrawer.sync="rightDrawer" :card.sync="card" :manufacturers="manufacturers" :currentCat="currentCat" :currentFirstCat.sync="currentFirstCat" :cats_first="cats_first" :cats="cats" />
     </v-navigation-drawer>
     </div>
 </template>
@@ -146,7 +146,10 @@ export default {
         async getCat(){
             if(this.card.cat!=null){
                  this.currentCat = this.cats.find(x=>x.id==this.card.cat);
-                 this.currentFirstCat = this.cats_first.find(x=>x.id==this.currentCat.parent);
+                 if(this.currentCat!==undefined){
+                   this.currentFirstCat = this.cats_first.find(x=>x.id==this.currentCat.parent);
+                 }
+
             }else{
                  this.currentCat = null;
                  this.currentFirstCat = null;

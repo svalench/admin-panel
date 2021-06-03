@@ -54,7 +54,6 @@
   </v-file-input>
     </v-col>
     <v-col>
-
     <v-card-title  v-if="changeRow.name">{{card.name}}<v-icon @click="changeRow.name=false">mdi-lead-pencil</v-icon></v-card-title>
         <v-card-title v-else>
             <v-text-field v-model="card.name" :value="card.name" label="название"></v-text-field>
@@ -102,7 +101,7 @@
     <v-card-title>
         <v-select
         v-model="select_cat_second"
-          v-bind:items="currentFirstCat!=null?cats.filter(x=>x.parent==currentFirstCat.id):second_arr"
+          :items="currentFirstCat!=null?cats.filter(x=>x.parent==currentFirstCat.id):second_arr"
           item-text="name"
           item-value="id"
           label="Категория"
@@ -151,12 +150,15 @@
 
       <div v-else>{{card.description?card.description:'No description'}}  <v-icon @click="changeRow.description=true">mdi-lead-pencil</v-icon></div>
     </v-card-text>
+
     </v-col>
     </v-row>
+          <v-divider class="mx-4"></v-divider>
+        <v-card-text>
+          <chackbox-card :id="card.id" :list="card.product"></chackbox-card>
+        </v-card-text>
 
-    <v-divider class="mx-4"></v-divider>
-
-
+<v-divider class="mx-4"></v-divider>
     <v-divider class="mx-4"></v-divider>
     <v-card-actions>
       <v-btn
@@ -175,12 +177,23 @@
       </v-btn>
     </v-card-actions>
   </v-card>
+
+     <v-navigation-drawer
+      v-model="leftDrawer"
+      :right="false"
+      temporary
+      fixed
+      width="60%"
+    >
+   </v-navigation-drawer>
     </div>
 </template>
 <script>
+import chackboxCard from "~/components/chackboxCard";
 export default {
     data(){
         return{
+          leftDrawer:false,
           files:[],
           file1:'',
           select_raw_check:null,
@@ -200,6 +213,9 @@ export default {
              changeRow:{name:true, description:false, nikname:false, email:false},
         }
     },
+  components:{
+      chackboxCard,
+  },
     props:['card','currentCat','cats','currentFirstCat', 'cats_first','rightDrawer','manufacturers'],
     mounted(){
     },
@@ -226,6 +242,7 @@ export default {
         rightDrawer(newval){
 
             if(!newval){
+              // this.currentFirstCat=null;
               this.raw_check=[];
               this.select_raw_check=null;
                this.filters_select =[];
@@ -236,13 +253,15 @@ export default {
                 this.select_manuf = undefined;
                 this.imagePreview = null;
             }else{
+                this.select_manuf = this.card.manufacturer;
                 if(this.currentCat!=null){
-                  if(this.card.product.length){
+                    if(this.card.product.length){
                     this.raw_check = this.card.product[0].filter_dict;
-                  }
 
-                  this.filters_select = this.card.filters;
+                  }
                     this.second_arr = this.cats.filter(x=>x.parent===this.currentFirstCat.id);
+                  this.filters_select = this.card.filters;
+
                     this.select_cat_second=this.currentCat.id;
                     let a = this.cats.filter(x=>x.id===newval)[0];
                     a!==undefined? this.filters =  a.filters_list:[];
@@ -301,7 +320,7 @@ export default {
                  formData.append('name', this.card.name);
                  formData.append('cat', this.card.cat);
                  formData.append('discont', this.card.discont);
-                 formData.append('filter_id_show', this.card.filter_id_show);
+                 formData.append('filter_id_show', this.card.filter_id_show?this.card.filter_id_show:0);
                  formData.append('s1_id', this.card.s1_id);
                  formData.append('description', this.card.description);
            await this.$axios.put(`/admin/catalog/cardproduct_admin/${this.card.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
@@ -318,6 +337,7 @@ export default {
             this.$emit('update:rightDrawer', false)
         },
         close(){
+        console.log(this.card.product, "product")
             this.$emit('update:rightDrawer', false)
         },
 
