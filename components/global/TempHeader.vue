@@ -116,6 +116,11 @@ export default {
           to: '/cards'
         },
         {
+          icon: 'mdi-star-check',
+          title: 'Характеристики',
+          to: '/characteristics'
+        },
+        {
           icon: 'mdi-account-cash',
           title: 'Список мантажников',
           to: '/mounters'
