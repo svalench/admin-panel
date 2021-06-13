@@ -38,6 +38,62 @@
 
 </div>
   <v-btn v-if="list && !list.length" @click="addNullRow" color="green"><v-icon>mdi-plus</v-icon></v-btn>
+
+
+    <v-dialog
+        v-if="list!==undefined"
+        transition="dialog-bottom-transition"
+        max-width="600"
+      >
+        <template  v-slot:activator="{ on, attrs }">
+          <v-btn
+            v-show="list.length"
+            color="primary"
+            v-bind="attrs"
+            v-on="on"
+            @click="delCheckedCharacterisitcs"
+          >Характеристики</v-btn>
+        </template>
+        <template v-slot:default="dialog">
+          <v-card>
+            <v-toolbar
+              color="primary"
+              dark
+            >Характеристики товара</v-toolbar>
+
+            <v-card-text v-if="list[column]!==undefined && list[column].filter_dict.length">
+              <div v-for="(v,k) in list[column].filter_dict">
+                <v-row>
+                <v-text-field :label="list[column].filter_dict[k].name" v-model="list[column].filter_dict[k].value" > </v-text-field>
+                <v-btn  @click="delCharacterisitc(k)" color="red"><v-icon>mdi-minus</v-icon></v-btn>
+              </v-row>
+              </div>
+            </v-card-text>
+
+            <v-card-actions>
+                <v-overflow-btn return-object
+      class="my-2"
+      :items="all_characteristic"
+      item-text="name"
+      menu-props="top"
+      label="добавить"
+      v-model="checkedCh"
+      target="#dropdown-example-1"
+    ></v-overflow-btn>
+              <v-text-field v-show="checkedCh" v-model="newVal"></v-text-field>
+              <v-btn v-show="checkedCh" @click="addCharacteristic" color="green"><v-icon>mdi-plus</v-icon></v-btn>
+              </v-card-actions>
+            <v-card-actions class="justify-end">
+              <v-btn
+                text
+                @click="dialog.value=false;getAllCharacteristics();"
+              >Закрыть</v-btn>
+            </v-card-actions>
+          </v-card>
+        </template>
+      </v-dialog>
+
+
   </div>
 </template>
 
@@ -49,12 +105,74 @@ export default {
     return {
       column: 0,
       add_to:null,
+      all_characteristic:[],
+      all_characteristic_name:[],
+      checkedCh:null,
+      newVal:null,
     }
+  },
+   mounted(){
+        this.getAllCharacteristics();
+    },
+  watch:{
+
   },
   methods: {
     ifset(i, name) {
       return i !== undefined ? i[name] : ''
     },
+    /**
+     * удаляет характеристику товара
+     * @param k номер по порядку
+     */
+    delCharacterisitc(k){
+      this.list[this.column].filter_dict.splice(k,1)
+      this.updProductFields()
+      this.delCheckedCharacterisitcs()
+    },
+    /**
+     *  удаляет из списка выбора уже выбранные характеристики
+     * @returns {Promise<void>}
+     */
+    async delCheckedCharacterisitcs(){
+      await  this.getAllCharacteristics()
+        for(let i in this.all_characteristic){
+          if(this.list[this.column].filter_dict.map(x=>x.name).includes(this.all_characteristic[i].name)){
+            this.all_characteristic.splice(i,1)
+          }
+        }
+    },
+    /**
+     * получает все характеристики с сервера
+     * @returns {Promise<void>}
+     */
+    async getAllCharacteristics(){
+      let data = await this.$axios.$get(`/admin/catalog/product_filters/?limit=9898989889`)
+      this.all_characteristic = data.results;
+    },
+    /**
+     * добавляет хар-ки товару
+     * @returns {Promise<void>}
+     */
+    async addCharacteristic(){
+      let data =  await  this.$axios.post(`/admin/catalog/product_filters_row/`,{name:this.checkedCh.name,parent:this.checkedCh.id,value:this.newVal})
+      this.list[this.column].filter_dict.push(data.data)
+       this.checkedCh = null;
+      this.newVal = null;
+      this.updProductFields()
+      this.delCheckedCharacterisitcs()
+    },
+    /**
+     * обновляет поля на сервере
+     * @returns {Promise<void>}
+     */
+    async updProductFields(){
+      let dataP = await this.$axios.put(`/admin/catalog/products_admin/${this.list[this.column].id}/`,{filters:this.list[this.column].filter_dict.map(x=>x.id),parent:this.list[this.column].parent,name:this.list[this.column].name,s1_id:this.list[this.column].s1_id})
+
+    },
+    /**
+     *  обнуление полей добавленного товара
+     */
     addNullRow(){
       this.add_to = {
         availability: false,
@@ -67,11 +185,14 @@ export default {
         parent: this.id,
         price: '',
         s1_id: '',
-        weight: ''
+        weight: '',
       };
       this.list.push(this.add_to);
         this.column = 0;
     },
+    /**
+     *  добавляет новый товар для заполнения
+     */
     async addrow(){
       this.add_to = JSON.parse(JSON.stringify(this.list[this.column]));
       for(let i of Object.keys(this.add_to)){
@@ -91,6 +212,10 @@ export default {
         this.list.push(this.add_to);
         this.column = switchTo;
     },
+    /**
+     * сохраняет поля товара
+     * @returns {Promise<void>}
+     */
     async save(){
       let data;
       if(this.list[this.column].id!==undefined){
@@ -100,6 +225,10 @@ export default {
         this.list[this.column] = data.data;
       }
     },
+    /**
+     * удаляет товар
+     * @returns {Promise<void>}
+     */
     async deleteRow(){
       let data = await this.$axios.delete(`/admin/catalog/products_admin/${this.list[this.column].id}/`);
       console.log(this.list.splice(this.column,1));

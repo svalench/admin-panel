@@ -221,7 +221,6 @@ export default {
     },
     watch:{
       group_filter(newval){
-        console.log(newval);
         if(Array.isArray(newval) && newval.length>0){
            this.filters_value = [];
           for(let i of newval){
@@ -240,7 +239,7 @@ export default {
            a!=undefined? this.filters =  a.filters_list:[];
         },
         rightDrawer(newval){
-
+            console.log(this.card)
             if(!newval){
               // this.currentFirstCat=null;
               this.raw_check=[];
