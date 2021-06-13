@@ -66,6 +66,7 @@
                 <v-row>
                 <v-text-field :label="list[column].filter_dict[k].name" v-model="list[column].filter_dict[k].value" > </v-text-field>
                 <v-btn  @click="delCharacterisitc(k)" color="red"><v-icon>mdi-minus</v-icon></v-btn>
+                   <v-btn  @click="updCharacterisitc(k)" color="blue"><v-icon>mdi-update</v-icon></v-btn>
               </v-row>
               </div>
             </v-card-text>
@@ -129,6 +130,9 @@ export default {
       this.list[this.column].filter_dict.splice(k,1)
       this.updProductFields()
       this.delCheckedCharacterisitcs()
+    },
+    async updCharacterisitc(k){
+      let data =  await  this.$axios.put(`/admin/catalog/product_filters_row/${this.list[this.column].filter_dict[k].id}/`,{name:this.list[this.column].filter_dict[k].name,parent:this.list[this.column].filter_dict[k].parent,value:this.list[this.column].filter_dict[k].value})
     },
     /**
      *  удаляет из списка выбора уже выбранные характеристики
