@@ -253,11 +253,11 @@ export default {
                 this.imagePreview = null;
             }else{
                 this.select_manuf = this.card.manufacturer;
-                if(this.currentCat!=null){
-                    if(this.card.product.length){
+                if(this.card.product.length){
                     this.raw_check = this.card.product[0].filter_dict;
 
                   }
+                if(this.currentCat!=null){
                     this.second_arr = this.cats.filter(x=>x.parent===this.currentFirstCat.id);
                   this.filters_select = this.card.filters;
 
@@ -322,6 +322,7 @@ export default {
                  formData.append('filter_id_show', this.card.filter_id_show?this.card.filter_id_show:0);
                  formData.append('s1_id', this.card.s1_id);
                  formData.append('description', this.card.description);
+         console.log(this.card)
            await this.$axios.put(`/admin/catalog/cardproduct_admin/${this.card.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
            if(this.files_slider.length>0){
               for(let i in this.files_slider){
