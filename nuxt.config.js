@@ -60,6 +60,8 @@ export default {
       local: {
         token: {
           property: 'token',
+          maxAge: 60*60*24*5,
+          global: true,
            type: 'Token'
         },
         user: {
@@ -68,8 +70,14 @@ export default {
         endpoints: {
           login: { url: '/signin/backend/signin/', method: 'post', propertyName: 'token' },
           logout: false,
+          refresh: { url: '/refresh/token/user/', method: 'post' },
           user: { url: '/users/mydata/', method: 'get' }
         },
+        refreshToken: {
+        property: 'refresh_token',
+        data: 'refresh_token',
+        maxAge: 60 * 60 * 24 * 30
+      },
         // tokenRequired: true,
         tokenType: '',
       },
