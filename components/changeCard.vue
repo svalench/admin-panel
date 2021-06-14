@@ -70,7 +70,7 @@
         v-model="card.filter_id_show"
           :items="raw_check"
           item-text="name"
-          item-value="id"
+          item-value="parent"
           label="Что выводим в чекбоксах"
           dense
           outlined
