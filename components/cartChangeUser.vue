@@ -15,7 +15,7 @@
     <v-col>
     <v-img
       height="250"
-      
+
       v-bind:src="user.img"
     >
         <v-file-input
@@ -28,7 +28,7 @@
     </v-img>
     </v-col>
     <v-col>
- 
+
     <v-card-title v-if="!changeRow.nikname">{{user.username}} <v-icon v-if="user.id==undefined" @click="changeRow.nikname=true">mdi-lead-pencil</v-icon></v-card-title>
     <v-card-title v-else>
       <v-text-field v-model="user.username" :value="user.username" label="nikname пользоателя (желательно email)"></v-text-field>
@@ -71,7 +71,7 @@
     <v-divider class="mx-4"></v-divider>
     <v-row>
     <v-col>
-        
+
     <v-row>
         <v-card-title>Дата регистрации</v-card-title>
         <v-card-text> {{user.date_joined}}</v-card-text>
@@ -88,6 +88,20 @@
         <v-chip>неопределен</v-chip>
         <v-chip>мужской</v-chip>
         <v-chip>женский</v-chip>
+      </v-chip-group>
+    </v-card-text>
+    </v-row>
+      <v-row>
+    <v-card-title>Тип пользователя</v-card-title>
+    <v-card-text>
+      <v-chip-group
+        v-model="user.type_of_user"
+        active-class="deep-purple accent-4 white--text"
+        column
+      >
+        <v-chip>неопределен</v-chip>
+        <v-chip>Юр. лицо</v-chip>
+        <v-chip>Физ. лицо</v-chip>
       </v-chip-group>
     </v-card-text>
     </v-row>
@@ -152,14 +166,14 @@ export default {
       previewLoad(){
         if(this.user.id==undefined){
           this.user.img= URL.createObjectURL(this.files)
-                    
+
             }
       },
         close(){
              this.$emit('update:rightDrawer', false)
         },
         async save(id){
-          
+
            let formData = new FormData();
            if(this.files.name!=undefined){
                     formData.append('img', this.files);
@@ -169,15 +183,16 @@ export default {
                       this.user.img = this.imagePreview;
                     }.bind(this), false);
                      reader.readAsDataURL( this.files );
-                    
+
                 }else{
                    delete this.user.img;
                 }
-            
+
             formData.append('username', this.user.username);
             formData.append('is_staff', this.user.is_staff?this.user.is_staff:false);
             formData.append('is_superuser', this.user.is_superuser?this.user.is_superuser:false);
              formData.append('sex', this.user.sex?this.user.sex:1);
+             formData.append('type_of_user', this.user.type_of_user?this.user.type_of_user:1);
             formData.append('is_active', true);
             formData.append('first_name', this.user.first_name?this.user.first_name:'');
             formData.append('last_name', this.user.last_name?this.user.last_name:'');
@@ -191,11 +206,11 @@ export default {
                let res = await this.$axios.put(`users/users/${users.data.id}/`,formData);
                this.userList.unshift(res.data)
              }
-             
+
            }else{
               this.$axios.put(`users/users/${id}/`,formData);
            }
-            
+
              this.$emit('update:rightDrawer', false)
         },
     },
