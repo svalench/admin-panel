@@ -96,6 +96,11 @@ export default {
           to: '/usersList'
         },
         {
+          icon: 'mdi-cart',
+          title: 'Корзины',
+          to: '/carts'
+        },
+        {
           icon: 'mdi-format-list-bulleted',
           title: 'Категории',
           to: '/category'
