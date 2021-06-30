@@ -71,7 +71,7 @@ export default {
   },
   methods:{
     async getData(){
-      let data = await this.$axios.get('/admin/cart/carts/');
+      let data = await this.$axios.get('/admin/cart/carts/?limit=9999');
       this.items = data.data.results;
       this.count = data.data.count;
     }
