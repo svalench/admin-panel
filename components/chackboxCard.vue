@@ -21,7 +21,7 @@
       v-model="column"
       mandatory
     >
-      <v-radio   v-for="(item, index) in list"
+      <v-radio   v-for="(item, index) in list" :key="index"
         :label="item.name"
         :value="index"
       ></v-radio>
