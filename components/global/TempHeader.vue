@@ -130,7 +130,11 @@ export default {
           title: 'Список мантажников',
           to: '/mounters'
         },
-
+        {
+          icon: 'mdi-tag-multiple',
+          title: 'Тэги мантажников',
+          to: '/tags'
+        },
       ],
       miniVariant: false,
       right: true,
