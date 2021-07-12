@@ -26,21 +26,11 @@
     </v-img>
     </div>
     <div>
-      <v-card-text>
-      <v-chip-group
-        v-model="sex"
-        active-class="deep-purple accent-4 white--text"
-        column
-      >
-        <v-chip>неопределен</v-chip>
-        <v-chip>мужской</v-chip>
-        <v-chip>женский</v-chip>
-      </v-chip-group>
-    </v-card-text>
+
     </div>
     </v-col>
     <v-col>
- 
+
     <v-card-title v-if="!changeRow.name" >{{mantazhnik!=undefined?mantazhnik.whoiam.first_name:''}} {{mantazhnik!=undefined?mantazhnik.whoiam.last_name:''}}<v-icon @click="changeRow.name=true">mdi-lead-pencil</v-icon></v-card-title>
         <v-card-title v-else>
             <v-text-field v-model="mantazhnik.whoiam.first_name" :value="mantazhnik.whoiam.first_name" label="имя"></v-text-field>
@@ -78,11 +68,28 @@
 
       <div v-else>{{mantazhnik!=undefined?mantazhnik.about?mantazhnik.about:'Нет описания дейтельности':''}}  <v-icon @click="changeRow.about=true">mdi-lead-pencil</v-icon></div>
     </v-card-text>
+      <v-card-text>
+        <v-select
+            v-model="mantazhnik.tags"
+            :items="tags"
+            attach
+            item-value="id"
+            item-text="name"
+            chips
+            label="Тэги"
+            multiple
+          ></v-select>
+      </v-card-text>
+      <v-card-text>
+        <div>
+          количество работ - {{mantazhnik.portfolio!==undefined?mantazhnik.portfolio.length:0}} <v-btn @click="dialog=true">Редактировать</v-btn>
+        </div>
+      </v-card-text>
     </v-col>
     </v-row>
 
     <v-divider class="mx-4"></v-divider>
-   
+
 
     <v-divider class="mx-4"></v-divider>
     <v-card-actions>
@@ -102,6 +109,73 @@
       </v-btn>
     </v-card-actions>
   </v-card>
+       <v-dialog v-model="dialog">
+         <v-card v-if="edit">
+           <v-card-title>Добавить работу</v-card-title>
+           <v-row>
+             <v-col cols="6">
+           <v-card-text>
+             <v-text-field v-model="portfolio.title"></v-text-field>
+             <v-textarea v-model="portfolio.description"></v-textarea>
+           </v-card-text>
+               </v-col>
+             <v-col cols="6">
+                  <v-carousel  v-model="portfolio.model">
+                          <v-carousel-item
+                            v-for="(img, key) in portfolio.images"
+                            :key="key"
+                          >
+                            <v-img :src="img.img" :aspect-ratio="16/9"></v-img>
+                          </v-carousel-item>
+                        </v-carousel>
+                          <v-file-input
+                            v-model="portfolio.images"
+                          multiple
+                          truncate-length="6"
+                        ></v-file-input>
+             </v-col>
+             </v-row>
+           <v-card-actions>
+             <v-btn @click="backToList">Отмена</v-btn>
+             <v-btn @click="addPortfolio">Сохранить</v-btn>
+           </v-card-actions>
+         </v-card>
+            <v-card v-else>
+              <v-card-title>
+                Список работ монтажника
+              </v-card-title>
+              <v-card-text>
+
+                  <v-card v-for="(i,k) in mantazhnik.portfolio" :key="k">
+                    <v-row >
+                  <v-col cols="6">
+                    <v-card-title>{{i.title}}</v-card-title>
+                    <v-card-text>{{i.description}}</v-card-text>
+                    </v-col>
+                      <v-col cols="6">
+                        <v-carousel  v-model="model[k]">
+                          <v-carousel-item
+                            v-for="(img, key) in i.images"
+                            :key="key"
+                          >
+                            <v-img :src="img.img" :aspect-ratio="16/9"></v-img>
+                          </v-carousel-item>
+                        </v-carousel>
+
+                  </v-col>
+                  </v-row>
+                    <v-card-actions>
+                      <v-btn @click="deletePortfolio(i)" color="red"><v-icon>mdi-delete</v-icon></v-btn>
+                      <v-btn @click="startUpdate(i)" color="blue"><v-icon>mdi-update</v-icon></v-btn>
+                    </v-card-actions>
+                  </v-card>
+              </v-card-text>
+              <v-card-actions>
+                <v-btn @click="dialog=false">Отмена</v-btn>
+                <v-btn @click="edit=true">Добавить</v-btn>
+              </v-card-actions>
+            </v-card>
+       </v-dialog>
     </div>
 </template>
 
@@ -109,16 +183,59 @@
 export default {
     data(){
         return{
-        files:[],
-        file1:'',
-        sex:0,
-        imagePreview:null,
-        loading:false,
-        changeRow:{name:false, description:false, about:false, nikname:false, email:false, phone:false,},
+          files:[],
+          file1:'',
+          sex:0,
+          model:Array(),
+          dialog:false,
+          imagePreview:null,
+          loading:false,
+          tags:[],
+          changeRow:{name:false, description:false, about:false, nikname:false, email:false, phone:false,},
+          edit:false,
+          portfolio:{description:'',title:'',images:[],model:0}
         }
     },
      props:['rightDrawer','mantazhnik','newuserid'],
-    methods:{
+  mounted() {
+      this.getTags();
+  },
+  methods:{
+      backToList(){
+        this.portfolio={description:'',title:'',images:[],model:0};
+            this.edit = false;
+      },
+    startUpdate(item){
+        this.edit = true;
+        this.portfolio.title = item.title;
+        this.portfolio.description = item.description;
+        this.portfolio.images = item.images;
+        this.portfolio.model = 0;
+        this.portfolio['id'] = item.id;
+    },
+    async addPortfolio(){
+        let formData = new FormData();
+        formData.append('description', this.portfolio.description)
+        formData.append('title', this.portfolio.title)
+        formData.append('user', this.mantazhnik.whoiam.id)
+      let dss;
+      if(this.portfolio.id!==undefined){
+           dss = await this.$axios.patch(`/portfolio/user/${this.portfolio.id}/`,formData);
+      }else{
+         dss = await this.$axios.post('/portfolio/user/',formData);
+      }
+      let formDataImg = new FormData();
+        for(let i of this.portfolio.images){
+          formDataImg = new FormData();
+          formDataImg.append('img',i)
+          formDataImg.append('parent',dss.data.id)
+          let d = await this.$axios.post('/portfolio/images/',formDataImg)
+        }
+    },
+      async getTags(){
+        let data = await this.$axios.get(`mounters/all_tags/?limit=9999999`);
+        this.tags = data.data.results;
+      },
         async save(){
              let formData = new FormData();
              let formDataUser = new FormData();
@@ -137,22 +254,22 @@ export default {
             formData.append('about', this.mantazhnik.about!=undefined?this.mantazhnik.about:'');
             formData.append('price', this.mantazhnik.price);
             formData.append('user', this.mantazhnik.user);
-            if(this.mantazhnik.tag!=undefined && this.mantazhnik.tag.length>0){
+            if(this.mantazhnik.tags!==undefined && this.mantazhnik.tags.length>0){
               for(let i of this.mantazhnik.tags){
                 formData.append('tags', i);
             }
             }
-            
-            
+
+
             let resUser = await this.$axios.put(`users/users/${this.mantazhnik.user}/`,formDataUser);
             if(this.mantazhnik.id!=undefined){
               let res = await this.$axios.put(`/users/mounting/${this.mantazhnik.id}/`,formData);
             }else{
                let res = await this.$axios.post(`/users/mounting/`,formData);
             }
-            
+
             this.$emit('update:newuserid',  null);
-            
+
         },
         close(){
             console.log(this.mantazhnik);
@@ -165,7 +282,14 @@ export default {
                       this.mantazhnik.whoiam.img = this.imagePreview;
                     }.bind(this), false);
                      reader.readAsDataURL( this.files );
-        }
+        },
+    async deletePortfolio(item){
+          await this.$axios.delete(`/portfolio/user/${item.id}/`)
+      const index = this.mantazhnik.portfolio.indexOf(item);
+           if (index > -1) {
+                this.mantazhnik.portfolio.splice(index, 1);
+            }
+    },
     },
     watch:{
 
