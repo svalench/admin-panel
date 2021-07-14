@@ -120,6 +120,7 @@
            </v-card-text>
                </v-col>
              <v-col cols="6">
+               <v-btn @click="deleteImageSlider"><v-icon>mdi-delete</v-icon></v-btn>
                   <v-carousel  v-model="portfolio.model">
                           <v-carousel-item
                             v-for="(img, key) in portfolio.images"
@@ -129,7 +130,7 @@
                           </v-carousel-item>
                         </v-carousel>
                           <v-file-input
-                            v-model="portfolio.images"
+                            v-model="portfolio.images1"
                           multiple
                           truncate-length="6"
                         ></v-file-input>
@@ -193,7 +194,7 @@ export default {
           tags:[],
           changeRow:{name:false, description:false, about:false, nikname:false, email:false, phone:false,},
           edit:false,
-          portfolio:{description:'',title:'',images:[],model:0}
+          portfolio:{description:'',title:'',images:[],images1:[],model:0}
         }
     },
      props:['rightDrawer','mantazhnik','newuserid'],
@@ -201,8 +202,12 @@ export default {
       this.getTags();
   },
   methods:{
+      async deleteImageSlider(){
+        await this.$axios.delete(`/portfolio/images/${this.portfolio.images[this.portfolio.model].id}/`);
+        this.portfolio.images.splice(this.actualImage,1);
+      },
       backToList(){
-        this.portfolio={description:'',title:'',images:[],model:0};
+        this.portfolio={description:'',title:'',images1:[],images:[],model:0};
             this.edit = false;
       },
     startUpdate(item){
@@ -225,12 +230,13 @@ export default {
          dss = await this.$axios.post('/portfolio/user/',formData);
       }
       let formDataImg = new FormData();
-        for(let i of this.portfolio.images){
+        for(let i of this.portfolio.images1){
           formDataImg = new FormData();
           formDataImg.append('img',i)
           formDataImg.append('parent',dss.data.id)
           let d = await this.$axios.post('/portfolio/images/',formDataImg)
         }
+        this.backToList()
     },
       async getTags(){
         let data = await this.$axios.get(`mounters/all_tags/?limit=9999999`);
