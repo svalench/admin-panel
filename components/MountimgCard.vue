@@ -80,6 +80,10 @@
             multiple
           ></v-select>
       </v-card-text>
+      <v-card-text >
+        <v-btn @click="mantazhnik.phone_s.push({phone_number:''})"><v-icon>mdi-plus</v-icon></v-btn>
+        <v-text-field v-for="(phone,k) in mantazhnik.phone_s" :key="k" label="телефон" v-model="phone.phone_number"></v-text-field>
+      </v-card-text>
       <v-card-text>
         <div>
           количество работ - {{mantazhnik.portfolio!==undefined?mantazhnik.portfolio.length:0}} <v-btn @click="dialog=true">Редактировать</v-btn>
@@ -254,6 +258,20 @@ export default {
                formDataUser.append('is_active', true);
              }
             formDataUser.append('first_name', this.mantazhnik.whoiam.first_name);
+             for(let i of this.mantazhnik.phone_s){
+               try {
+                 if(i.id==undefined){
+                 await this.$axios.post(`/mounters/phones/`,{phone_number:i.phone_number,user:this.mantazhnik.id})
+               }else{
+                 await this.$axios.patch(`/mounters/phones/${i.id}/`,{phone_number:i.phone_number,user:this.mantazhnik.id})
+               }
+               }catch (e){
+                 alert("Не верно введен номер телефона");
+                 return;
+               }
+
+
+             }
             formDataUser.append('sex', this.sex);
             formDataUser.append('last_name', this.mantazhnik.whoiam.last_name);
             formData.append('description', this.mantazhnik.description!=undefined? this.mantazhnik.description:'');
