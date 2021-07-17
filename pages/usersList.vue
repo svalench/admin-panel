@@ -24,14 +24,12 @@
           </v-col>
         </v-row>
       </template>
-      
-      <template v-slot:item.sex="{ item }">
-      <v-chip
-        :color="item.sex==0?'red':item.sex==1?'blue':'yellow'"
-        dark
-      >
-        {{ item.sex==0?'неопределен':item.sex==1?'мужской':'женский' }}
-      </v-chip>
+
+      <template v-slot:item.date_joined="{ item }">
+          {{new Date(item.date_joined).toLocaleString()}}
+    </template>
+       <template v-slot:item.birth_date="{ item }">
+          {{item.birth_date?new Date(item.birth_date).toLocaleString():"Не указано"}}
     </template>
      <template v-slot:item.img="{ item }">
           <v-img
@@ -68,7 +66,7 @@ import cartUserChange from '@/components/cartChangeUser.vue'
          cartUserChange
      },
      async asyncData({ params, $axios }) {
-        
+
      },
     data () {
       return {
@@ -102,7 +100,7 @@ import cartUserChange from '@/components/cartChangeUser.vue'
         },
         options: {
         handler () {
-            
+
           this.getMoreUsers()
         },
         deep: true,
@@ -126,14 +124,14 @@ import cartUserChange from '@/components/cartChangeUser.vue'
               return value < parseInt(this.calories)
             },
           },
-          { text: 'Ник пользователя', value: 'username' },
+          // { text: 'Ник пользователя', value: 'username' },
            { text: 'изображение', value: 'img' },
           { text: 'имя', value: 'first_name' },
           { text: 'фамилия', value: 'last_name' },
           { text: 'Дата регистрации', value: 'date_joined' },
           { text: 'Дата рождения', value: 'birth_date' },
            { text: 'телефон', value: 'phone_number' },
-           { text: 'пол', value: 'sex' },
+           // { text: 'пол', value: 'sex' },
            { text: 'действия', value: 'action' },
         ]
       },
