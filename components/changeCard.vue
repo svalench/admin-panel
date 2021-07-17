@@ -87,6 +87,10 @@
           outlined
         ></v-select>
     </v-card-title>
+      <v-card-text>
+        <v-text-field label="укажите кратность" v-model="card.multiplicity" type="intager"></v-text-field>
+        <v-text-field label="едеинцы измерения" v-model="card.units" type="text"></v-text-field>
+      </v-card-text>
     <v-card-title>
         <v-select
         v-model="select_cat"
@@ -286,10 +290,18 @@ export default {
         }
     },
     methods:{
+      /**
+       * удоляет по одной фотки из слайдера
+       * @returns {Promise<void>}
+       */
       async deleteImageSlider(){
         await this.$axios.delete(`/admin/catalog/cardproduct_img_admin/${this.card.images[this.actualImage].id}/`);
         this.card.images.splice(this.actualImage,1);
       },
+      /**
+       * сохроняет данные
+       * @returns {Promise<void>}
+       */
        async save(){
             this.card.cat = this.select_cat_second!=undefined?this.select_cat_second:'';
            if (this.select_cat_second!=undefined){
@@ -322,7 +334,8 @@ export default {
                  formData.append('filter_id_show', this.card.filter_id_show?this.card.filter_id_show:0);
                  formData.append('s1_id', this.card.s1_id);
                  formData.append('description', this.card.description);
-         console.log(this.card)
+                 formData.append('multiplicity', this.card.multiplicity);
+                 formData.append('units', this.card.units);
            await this.$axios.put(`/admin/catalog/cardproduct_admin/${this.card.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
            if(this.files_slider.length>0){
               for(let i in this.files_slider){
@@ -336,6 +349,9 @@ export default {
            }
             this.$emit('update:rightDrawer', false)
         },
+      /**
+       * закрытие компонента
+       */
         close(){
         console.log(this.card.product, "product")
             this.$emit('update:rightDrawer', false)
