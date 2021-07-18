@@ -7,7 +7,7 @@
       :server-items-length="count"
        :options.sync="options"
       :loading ="loading"
-      :footer-props="footerProps"   
+      :footer-props="footerProps"
       class="elevation-1"
 
     >
@@ -49,8 +49,8 @@
       fixed
       width="50%"
     >
-    <MountingCard :newuserid.sync="newuserid" :rightDrawer.sync="rightDrawer" :mantazhnik.sync="mounter" />
-    <ModalChoise :newuserid.sync="newuserid"  :rightDrawer.sync="rightDrawer" :dialog.sync="dialog" />
+    <MountingCard :newuserid.sync="newuserid" :userid.sync="userid" :rightDrawer.sync="rightDrawer" :mantazhnik.sync="mounter" />
+    <ModalChoise :newuserid.sync="newuserid"  :userid.sync="userid" :rightDrawer.sync="rightDrawer" :dialog.sync="dialog" />
     </v-navigation-drawer>
     </div>
 </template>
@@ -75,13 +75,14 @@ export default {
             offset:0,
             newuserid:null,
             loading:false,
+            userid:null,
             search:'',
             mounters:[],
             mounter:{whoiam:{}, newuserid:this.newuserid},
             footerProps: {'items-per-page-options': [10, 25, 50, 100]},
         }
     },
-    
+
     mounted(){
         this.getUserMounter();
     },

@@ -201,7 +201,7 @@ export default {
           portfolio:{description:'',title:'',images:[],images1:[],model:0}
         }
     },
-     props:['rightDrawer','mantazhnik','newuserid'],
+     props:['rightDrawer','mantazhnik','newuserid', 'userid'],
   mounted() {
       this.getTags();
   },
@@ -258,7 +258,8 @@ export default {
                formDataUser.append('is_active', true);
              }
             formDataUser.append('first_name', this.mantazhnik.whoiam.first_name);
-             for(let i of this.mantazhnik.phone_s){
+             if(Array.isArray(this.mantazhnik.phone_s)){
+               for(let i of this.mantazhnik.phone_s){
                try {
                  if(i.id==undefined){
                  await this.$axios.post(`/mounters/phones/`,{phone_number:i.phone_number,user:this.mantazhnik.id})
@@ -269,9 +270,9 @@ export default {
                  alert("Не верно введен номер телефона");
                  return;
                }
-
-
              }
+             }
+
             formDataUser.append('sex', this.sex);
             formDataUser.append('last_name', this.mantazhnik.whoiam.last_name);
             formData.append('description', this.mantazhnik.description!=undefined? this.mantazhnik.description:'');
@@ -283,7 +284,9 @@ export default {
                 formData.append('tags', i);
             }
             }
-
+             if(this.userid!=null){
+               formDataUser.append('is_active', true);
+             }
 
             let resUser = await this.$axios.put(`users/users/${this.mantazhnik.user}/`,formDataUser);
             if(this.mantazhnik.id!=undefined){
@@ -316,7 +319,13 @@ export default {
     },
     },
     watch:{
-
+        rightDrawer(){
+          if(this.userid!=null){
+               this.mantazhnik.user = this.userid.id;
+               this.mantazhnik['whoiam']['first_name'] =  this.userid.first_name;
+               this.mantazhnik['whoiam']['last_name'] =  this.userid.last_name;
+             }
+        }
     }
 }
 </script>

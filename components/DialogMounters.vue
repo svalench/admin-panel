@@ -2,7 +2,7 @@
       <v-dialog
       v-model="dialog"
         transition="dialog-bottom-transition"
-        max-width="600"
+        max-width="800"
       >
           <v-card >
               <div v-if="adduser">
@@ -17,6 +17,32 @@
         <div v-for="e in errors" :key="e[0]">{{e[0]}}</div>
              </v-card-text>
               </div>
+            <div v-else-if="addmantazhfromisset">
+               <v-toolbar color="primary" dark>Добавить возможности монтажника пользователю</v-toolbar>
+          <v-card-text>
+            <v-data-table
+      :headers="headers"
+      :items="listUser"
+      :page.sync="page"
+      :server-items-length="count"
+       :options.sync="options"
+      :loading ="loading"
+      :footer-props="footerProps"
+      class="elevation-1">
+               <template v-slot:item.img="{ item }">
+                 <v-badge bordered :color="item.is_maunter?'error':'success'" :icon="item.is_maunter?'mdi-lock':'mdi-plus'" overlap>
+                    <v-img width="60" :src="item.img"></v-img>
+                 </v-badge>
+                </template>
+              <template v-slot:item.is_maunter="{ item }">
+                    <v-icon :color="item.is_maunter?'error':'success'">{{item.is_maunter?'mdi-lock':'mdi-plus'}}</v-icon>
+              </template>
+              <template v-slot:item.action="{ item }">
+                <v-btn @click="checKrealUser(item)" :disabled="item.is_maunter">выбрать</v-btn>
+              </template>
+            </v-data-table>
+          </v-card-text>
+        </div>
               <div v-else>
             <v-toolbar
               color="primary"
@@ -26,29 +52,51 @@
               <div class="text-h5 pa-12">Для создание и мантажника и пользователя сисетмы выберите 1. Для создания только мантажника с выбором уже зарегистрированного пользотваеля нажмите 2. </div>
             </v-card-text>
             </div>
-
             <v-card-actions class="justify-end">
-                <v-btn v-if="adduser" :disabled="newuser.password.length<8?true:false" @click="addUser">Добавить</v-btn>
-                <v-btn @click="adduser=!adduser">{{adduser?'назад':1}}</v-btn>
-                <v-btn @click="addMAntazh">2</v-btn>
+                <v-btn v-if="adduser && !addmantazhfromisset" :disabled="newuser.password.length<8?true:false" @click="addUser">Добавить</v-btn>
+                <v-btn @click="adduser=!adduser;addmantazhfromisset=false;">{{ (adduser)?'назад':1}}</v-btn>
+                <v-btn v-if="addmantazhfromisset" @click="addmantazhfromisset=!addmantazhfromisset">назад</v-btn>
+                <v-btn v-if="!addmantazhfromisset" @click="addMAntazh">2</v-btn>
               <v-btn
                 text
                 @click="close"
               >Отмена</v-btn>
             </v-card-actions>
           </v-card>
+
       </v-dialog>
 </template>
 <script>
 export default {
     data(){
         return{
-           adduser:false,
-           errors:{},
-           newuser:{username:'',password:'',password2:''},
+            adduser:false,
+            addmantazhfromisset:false,
+            errors:{},
+            listUser:[],
+            options:{},
+            footerProps: {'items-per-page-options': [10, 25, 50, 100]},
+            page:1,
+            count:0,
+            loading:false,
+            limitUser:10,
+            offsetUser:0,
+            newuser:{username:'',password:'',password2:''},
         }
     },
     props:['dialog','rightDrawer','newuserid'],
+    computed:{
+      headers(){
+              return[
+                {text:'ID',value:'id'},
+                { text: 'изображение', value: 'img' },
+                {text:'имя',value:'first_name'},
+                {text:'фамилия',value:'last_name'},
+                {text:'статус',value:'is_maunter'},
+                {text:'указать',value:'action'}
+              ]
+            },
+    },
     methods:{
         async addUser(){
             this.newuser.password2 = this.newuser.password;
@@ -65,8 +113,6 @@ export default {
                 ).catch(
                     error=>this.errors=error.response.data
                 );
-                 console.log(users);
-                 console.log(this.errors);
                  if(users != undefined && users.status==201){
                         this.$emit('update:dialog', false);
                         this.adduser = false;
@@ -74,9 +120,26 @@ export default {
                         this.$emit('update:newuserid',  users.data.id);
                  }
         },
-        addMAntazh(){
-
+      checKrealUser(item){
+          this.$emit('update:dialog', false);
+                        this.addmantazhfromisset = false;
+                        this.$emit('update:rightDrawer', true);
+                        this.$emit('update:userid',  item);
+      },
+        async addMAntazh(){
+          this.adduser = false;
+            this.getListUser();
+            this.addmantazhfromisset= true;
         },
+      async getListUser(){
+          this.loading = true;
+            const { sortBy, sortDesc, page, itemsPerPage } = this.options;
+             this.offsetUser = itemsPerPage*(page-1);
+            let data = await this.$axios.get(`/users/users/?limit=${this.limitUser}&offset=${this.offsetUser}`);
+            this.listUser = data.data.results;
+        this.count = data.data.count;
+        this.loading = false;
+      },
         close(){
             this.adduser = false;
             this.dialog = false;
@@ -87,7 +150,13 @@ export default {
             if(!newval){
                 this.$emit('update:dialog', false);
             }
-        }
+        },
+      options: {
+        handler () {
+          this.getListUser()
+        },
+        deep: true,
+      },
     }
 }
 </script>
