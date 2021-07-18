@@ -49,7 +49,7 @@
       fixed
       width="50%"
     >
-    <MountingCard :newuserid.sync="newuserid" :userid.sync="userid" :rightDrawer.sync="rightDrawer" :mantazhnik.sync="mounter" />
+    <MountingCard :newuserid.sync="newuserid" :userid.sync="userid" :rightDrawer.sync="rightDrawer" :mantaz.sync="mounter" />
     <ModalChoise :newuserid.sync="newuserid"  :userid.sync="userid" :rightDrawer.sync="rightDrawer" :dialog.sync="dialog" />
     </v-navigation-drawer>
     </div>
@@ -129,6 +129,12 @@ export default {
       },
     },
     watch:{
+      options: {
+        handler () {
+          this.getUserMounter()
+        },
+        deep: true,
+      },
         search(newval){
           if(newval==''){
             if(this.timer!=null){clearTimeout(this.timer)}
@@ -138,6 +144,12 @@ export default {
             this.timer = setTimeout( this.searchMounters,700,newval);
           }
         },
+      newuserid(){
+          this.mounter={whoiam:{}, newuserid:this.newuserid}
+      },
+      userid(){
+          this.mounter={whoiam:{}, newuserid:this.newuserid}
+      }
     },
 }
 </script>

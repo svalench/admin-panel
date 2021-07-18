@@ -38,7 +38,7 @@
         <v-icon @click="changeRow.name=false">mdi-check-bold</v-icon>
         </v-card-title>
     <v-card-title>
-         <v-text-field v-model="mantazhnik.price" type="number" :value="mantazhnik.price" label="цена"></v-text-field>
+         <v-text-field ref="price" v-model="mantazhnik.price" type="number" :value="mantazhnik.price" label="цена"></v-text-field>
     </v-card-title>
     <v-card-text>
 <div v-if="changeRow.description">
@@ -81,10 +81,13 @@
           ></v-select>
       </v-card-text>
       <v-card-text >
-        <v-btn @click="mantazhnik.phone_s.push({phone_number:''})"><v-icon>mdi-plus</v-icon></v-btn>
-        <v-text-field v-for="(phone,k) in mantazhnik.phone_s" :key="k" label="телефон" v-model="phone.phone_number"></v-text-field>
+        <v-btn @click="addPhone"><v-icon>mdi-plus</v-icon></v-btn>
+        <div  v-for="(phone,k) in phone_s" :key="k" >
+          <v-text-field label="телефон" v-model="phone.phone_number"></v-text-field>
+        </div>
+
       </v-card-text>
-      <v-card-text>
+      <v-card-text v-if="this.mantazhnik.id">
         <div>
           количество работ - {{mantazhnik.portfolio!==undefined?mantazhnik.portfolio.length:0}} <v-btn @click="dialog=true">Редактировать</v-btn>
         </div>
@@ -193,15 +196,18 @@ export default {
           sex:0,
           model:Array(),
           dialog:false,
+
           imagePreview:null,
           loading:false,
           tags:[],
           changeRow:{name:false, description:false, about:false, nikname:false, email:false, phone:false,},
           edit:false,
+          mantazhnik:JSON.parse(JSON.stringify(this.mantaz)),
+          phone_s:this.mantazhnik!==undefined?this.mantazhnik.phone_s?this.mantazhnik.phone_s:[]:[],
           portfolio:{description:'',title:'',images:[],images1:[],model:0}
         }
     },
-     props:['rightDrawer','mantazhnik','newuserid', 'userid'],
+     props:['rightDrawer','mantaz','newuserid', 'userid'],
   mounted() {
       this.getTags();
   },
@@ -247,6 +253,11 @@ export default {
         this.tags = data.data.results;
       },
         async save(){
+        if(this.mantazhnik.price===undefined){
+            alert('Не указана цена!');
+            this.$refs.price.focus();
+            return;
+        }
              let formData = new FormData();
              let formDataUser = new FormData();
              if(this.files.name!=undefined){
@@ -258,20 +269,6 @@ export default {
                formDataUser.append('is_active', true);
              }
             formDataUser.append('first_name', this.mantazhnik.whoiam.first_name);
-             if(Array.isArray(this.mantazhnik.phone_s)){
-               for(let i of this.mantazhnik.phone_s){
-               try {
-                 if(i.id==undefined){
-                 await this.$axios.post(`/mounters/phones/`,{phone_number:i.phone_number,user:this.mantazhnik.id})
-               }else{
-                 await this.$axios.patch(`/mounters/phones/${i.id}/`,{phone_number:i.phone_number,user:this.mantazhnik.id})
-               }
-               }catch (e){
-                 alert("Не верно введен номер телефона");
-                 return;
-               }
-             }
-             }
 
             formDataUser.append('sex', this.sex);
             formDataUser.append('last_name', this.mantazhnik.whoiam.last_name);
@@ -287,13 +284,30 @@ export default {
              if(this.userid!=null){
                formDataUser.append('is_active', true);
              }
-
+            let res={}
             let resUser = await this.$axios.put(`users/users/${this.mantazhnik.user}/`,formDataUser);
             if(this.mantazhnik.id!=undefined){
-              let res = await this.$axios.put(`/users/mounting/${this.mantazhnik.id}/`,formData);
+             res  = await this.$axios.put(`/users/mounting/${this.mantazhnik.id}/`,formData);
             }else{
-               let res = await this.$axios.post(`/users/mounting/`,formData);
+              res = await this.$axios.post(`/users/mounting/`,formData);
             }
+          console.log(res)
+          console.log(res.id)
+            if(Array.isArray(this.phone_s)){
+               for(let i of this.phone_s){
+               try {
+                 if(i.id==undefined){
+                 await this.$axios.post(`/mounters/phones/`,{"phone_number":i.phone_number, "user":res.data.id})
+               }else{
+                 await this.$axios.patch(`/mounters/phones/${i.id}/`,{phone_number:i.phone_number,user:res.data.id})
+               }
+               }catch (e){
+                 console.log(e)
+                 alert("Не верно введен номер телефона");
+                 return;
+               }
+             }
+             }
 
             this.$emit('update:newuserid',  null);
 
@@ -317,11 +331,30 @@ export default {
                 this.mantazhnik.portfolio.splice(index, 1);
             }
     },
+    addPhone(){
+        if(this.mantazhnik.phone_s===undefined){this.mantazhnik.phone_s=[]}
+        this.phone_s.push({phone_number:''})
+    }
     },
     watch:{
-        rightDrawer(){
+        rightDrawer(nn){
+          if(!nn){
+            this.mantazhnik={};
+          }
+          this.$refs.price.focus();
+          this.mantazhnik=JSON.parse(JSON.stringify(this.mantaz))
+          if(this.mantazhnik.phone_s===undefined){
+            this.mantazhnik.phone_s = [];
+
+          }else{
+            this.phone_s = this.mantazhnik.phone_s;
+          }
+
           if(this.userid!=null){
+            // this.mantazhnik.price = 0;
                this.mantazhnik.user = this.userid.id;
+               this.mantazhnik.phone_s = [];
+               this.mantazhnik.whoiam.img = this.userid.img?this.userid.img:'';
                this.mantazhnik['whoiam']['first_name'] =  this.userid.first_name;
                this.mantazhnik['whoiam']['last_name'] =  this.userid.last_name;
              }
