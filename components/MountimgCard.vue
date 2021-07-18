@@ -285,9 +285,9 @@ export default {
                formDataUser.append('is_active', true);
              }
             let res={}
-            let resUser = await this.$axios.put(`users/users/${this.mantazhnik.user}/`,formDataUser);
+            let resUser = await this.$axios.patch(`users/users/${this.mantazhnik.user}/`,formDataUser);
             if(this.mantazhnik.id!=undefined){
-             res  = await this.$axios.put(`/users/mounting/${this.mantazhnik.id}/`,formData);
+             res  = await this.$axios.patch(`/users/mounting/${this.mantazhnik.id}/`,formData);
             }else{
               res = await this.$axios.post(`/users/mounting/`,formData);
             }
