@@ -24,17 +24,22 @@
     </v-col>
       </v-row>
     <v-row>
-      <v-col>
-        <v-card-text >
+
         <v-btn @click="addPhone"><v-icon>mdi-plus</v-icon></v-btn>
+
         <div  v-for="(phone,k) in phones" :key="k" >
+          <v-col>
           <v-text-field label="телефон" v-model="phone.phone_number"></v-text-field>
+            </v-col>
+          <v-col>
+            <v-text-field label="оператор" v-model="phone.operator"></v-text-field>
+          </v-col>
+            <v-col>
           <v-btn v-show="phone.id" @click="deletePhone(k)"><v-icon>mdi-delete</v-icon></v-btn>
            <v-btn v-show="!phones[k].id" @click="savePhone(k)"><v-icon>mdi-content-save</v-icon></v-btn>
+          </v-col>
         </div>
 
-      </v-card-text>
-      </v-col>
     </v-row>
     <v-row>
       <contentPreview @updateImg="updateImg" @updateData="setData" :action="'updateData'" :title.sync="i.title_block" :text.sync="i.description" :img="i.img" />
