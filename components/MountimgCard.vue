@@ -300,7 +300,6 @@ export default {
                  await this.$axios.patch(`/mounters/phones/${i.id}/`,{phone_number:i.phone_number,user:res.data.id})
                }
                }catch (e){
-                 console.log(e)
                  alert("Не верно введен номер телефона");
                  return;
                }
