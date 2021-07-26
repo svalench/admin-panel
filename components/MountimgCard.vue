@@ -310,7 +310,6 @@ export default {
 
         },
         close(){
-            console.log(this.mantazhnik);
             this.$emit('update:rightDrawer', false);
         },
         changeImg(){
