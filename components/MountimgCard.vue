@@ -291,8 +291,6 @@ export default {
             }else{
               res = await this.$axios.post(`/users/mounting/`,formData);
             }
-          console.log(res)
-          console.log(res.id)
             if(Array.isArray(this.phone_s)){
                for(let i of this.phone_s){
                try {
