@@ -50,6 +50,7 @@
 
 <script>
 export default {
+  middleware: 'auth',
   name: "tags",
   data(){
     return{

@@ -49,6 +49,7 @@ import textEditor from "~/components/global/textEditor";
 import cardComponent from "~/components/cardComponent";
 import contentPreview from "~/components/contentPreview";
 export default {
+  middleware: 'auth',
   components:{
     textEditor,
     cardComponent,
@@ -79,7 +80,6 @@ export default {
     },
     async savePhone(k){
           let data = await this.$axios.post(`/users/phones/`,this.phones[k]);
-      console.log(data);
           this.phones[k] = data.data;
           this.phones.push({});
           this.phones.splice(this.phones.length,1);

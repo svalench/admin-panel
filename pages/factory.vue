@@ -7,7 +7,7 @@
       :server-items-length="count"
        :options.sync="options"
       :loading ="loading"
-      :footer-props="footerProps"   
+      :footer-props="footerProps"
       class="elevation-1"
 
     >
@@ -58,6 +58,7 @@
 <script>
 import changeManufactory from '@/components/changeManufactory.vue'
 export default {
+  middleware: 'auth',
     components:{
         changeManufactory,
     },
@@ -111,7 +112,7 @@ export default {
         },
         options: {
         handler () {
-            
+
           this.getManufactory()
         },
         deep: true,

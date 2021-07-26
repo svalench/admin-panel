@@ -62,6 +62,7 @@
 <script>
 import cartUserChange from '@/components/cartChangeUser.vue'
  export default {
+  middleware: 'auth',
      components:{
          cartUserChange
      },

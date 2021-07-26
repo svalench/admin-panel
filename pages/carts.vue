@@ -54,6 +54,7 @@
 <script>
 import cartData from "~/components/cartData";
 export default {
+  middleware: 'auth',
   name: "carts",
   components:{
     cartData

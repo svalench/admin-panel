@@ -59,6 +59,7 @@
 import MountingCard from '@/components/MountimgCard.vue'
 import ModalChoise from '@/components/DialogMounters.vue'
 export default {
+  middleware: 'auth',
     components:{
        MountingCard,
        ModalChoise

@@ -7,7 +7,7 @@
       :server-items-length="count"
        :options.sync="options"
       :loading ="loading"
-      :footer-props="footerProps"   
+      :footer-props="footerProps"
       class="elevation-1"
 
     >
@@ -66,6 +66,7 @@
 <script>
 import sliderChange from '@/components/sliderChange.vue'
 export default {
+  middleware: 'auth',
     components:{
         sliderChange,
     },
@@ -120,7 +121,7 @@ export default {
         },
         options: {
         handler () {
-            
+
           this.getSliders()
         },
         deep: true,

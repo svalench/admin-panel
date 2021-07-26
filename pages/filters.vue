@@ -7,7 +7,7 @@
       :server-items-length="count"
        :options.sync="options"
       :loading ="loading"
-      :footer-props="footerProps"   
+      :footer-props="footerProps"
       class="elevation-1"
 
     >
@@ -52,6 +52,7 @@
 <script>
 import cardFilterChange from '@/components/cardFilterChange.vue'
 export default {
+  middleware: 'auth',
     components:{
        cardFilterChange,
     },
@@ -105,7 +106,7 @@ export default {
         },
         options: {
         handler () {
-            
+
           this.getFilterCats()
         },
         deep: true,
@@ -118,7 +119,7 @@ export default {
     methods:{
       async deleteFilter(item){
          if(!confirm('Вы уверены?')){return}
-            
+
             const index = this.filters.indexOf(item);
             if (index > -1) {
                 this.filters.splice(index, 1);
@@ -126,9 +127,9 @@ export default {
             this.count = this.count - 1;
       },
       async getCat(){
-        let data = await this.$axios.get(`/admin/catalog/category_second/?limit=99999999`); 
+        let data = await this.$axios.get(`/admin/catalog/category_second/?limit=99999999`);
             this.cats = data.data.results;
-            let data1 = await this.$axios.get(`/admin/catalog/category_first/?limit=99999999`); 
+            let data1 = await this.$axios.get(`/admin/catalog/category_first/?limit=99999999`);
             this.cats_first = data1.data.results;
       },
       async searchFilter(str1){

@@ -61,6 +61,7 @@
 <script>
 import changeCard from '@/components/changeCard.vue'
 export default {
+  middleware: 'auth',
     components:{
         changeCard,
     },
