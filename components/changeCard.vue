@@ -93,7 +93,7 @@
       </v-card-text>
     <v-card-title>
         <v-select
-        v-model="select_cat"
+        v-model="card.cat"
           :items="cats_first"
           item-text="name"
           item-value="id"
@@ -104,42 +104,17 @@
     </v-card-title>
     <v-card-title>
         <v-select
-        v-model="select_cat_second"
-          :items="currentFirstCat!=null?cats.filter(x=>x.parent==currentFirstCat.id):second_arr"
-          item-text="name"
-          item-value="id"
-          label="Категория"
-          dense
-          :disabled="select_cat==undefined?true:false"
-          outlined
-        ></v-select>
-    </v-card-title>
-    <v-card-title>
-        <v-select
-        v-model="group_filter"
+        v-model="card.filters_new"
           v-bind:items="filters"
-          item-text="name"
-          item-value="id"
-          label="Группы филтров"
-          chips
-            multiple
-          :disabled="select_cat==undefined?true:false"
-          outlined
-        ></v-select>
-    </v-card-title>
-    <v-card-title v-for="val in filters_value" :key="val.name">
-        <v-select
-        v-model="filters_select"
-          v-bind:items="val.values"
           item-text="value"
           item-value="id"
-          :label="'Фильтр '+val.name"
+          label="фильтра"
           chips
             multiple
-          :disabled="select_cat==undefined?true:false"
           outlined
         ></v-select>
     </v-card-title>
+
     <v-card-text>
 <div v-if="changeRow.description">
     <v-textarea
@@ -222,6 +197,7 @@ export default {
   },
     props:['card','currentCat','cats','currentFirstCat', 'cats_first','rightDrawer','manufacturers'],
     mounted(){
+      this.getValuesFilters()
     },
     watch:{
       group_filter(newval){
@@ -232,20 +208,14 @@ export default {
              this.filters_value.push({values:a.filter_value,name:a.name});
           }
         }
-       // this.filters_value =
       },
         select_cat(newval){
             this.second_arr = this.cats.filter(x=>x.parent==newval);
 
         },
-        select_cat_second(newval){
-           let a = this.cats.filter(x=>x.id==newval)[0];
-           a!=undefined? this.filters =  a.filters_list:[];
-        },
         rightDrawer(newval){
             console.log(this.card)
             if(!newval){
-              // this.currentFirstCat=null;
               this.raw_check=[];
               this.select_raw_check=null;
                this.filters_select =[];
@@ -268,19 +238,8 @@ export default {
                     this.select_cat_second=this.currentCat.id;
                     let a = this.cats.filter(x=>x.id===newval)[0];
                     a!==undefined? this.filters =  a.filters_list:[];
-                    this.filters =  this.cats.filter(x=>x.id==newval)[0].filters_list;
-                   if(this.card.filters.length>0){
-                      for(let a of this.card.filters){
-                        console.log(this.filters.find(x=>x.filter_value.find(c=>c.id==a)));
-                        try{
-                            this.group_filter.push(this.filters.find(x=>x.filter_value.find(c=>c.id==a)).id);
-                        }catch{
-                             this.group_filter=[];
-                        }
+                    // this.filters =  this.cats.filter(x=>x.id==newval)[0].filters_list;
 
-                        this.group_filter = [... new Set(this.group_filter)]
-                      }
-                    }
                 }else{
                     this.select_cat_second=undefined;
                 }
@@ -290,6 +249,11 @@ export default {
         }
     },
     methods:{
+      async getValuesFilters(){
+      let data = await this.$axios.get(`/admin/catalog/new_chice/?limit=9999999999`);
+      this.filters = data.data.results;
+        console.log(this.filters)
+    },
       /**
        * удоляет по одной фотки из слайдера
        * @returns {Promise<void>}
@@ -303,10 +267,6 @@ export default {
        * @returns {Promise<void>}
        */
        async save(){
-            this.card.cat = this.select_cat_second!=undefined?this.select_cat_second:'';
-           if (this.select_cat_second!=undefined){
-             this.card.cat_name= this.cats.filter(x=>x.id==this.select_cat_second)[0].name;
-           }
             let formData = new FormData();
                 if(this.files.name!=undefined){
                     formData.append('img', this.files);
@@ -333,10 +293,14 @@ export default {
                  formData.append('discont', this.card.discont);
                  formData.append('filter_id_show', this.card.filter_id_show?this.card.filter_id_show:0);
                  formData.append('s1_id', this.card.s1_id);
+                 for(let i of this.card.filters_new){
+                   formData.append('filters_new', i);
+                 }
+
                  formData.append('description', this.card.description);
                  formData.append('multiplicity', this.card.multiplicity);
                  formData.append('units', this.card.units);
-           await this.$axios.put(`/admin/catalog/cardproduct_admin/${this.card.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
+           await this.$axios.patch(`/admin/catalog/cardproduct_admin/${this.card.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
            if(this.files_slider.length>0){
               for(let i in this.files_slider){
                 let imgForm = new FormData();
@@ -353,7 +317,6 @@ export default {
        * закрытие компонента
        */
         close(){
-        console.log(this.card.product, "product")
             this.$emit('update:rightDrawer', false)
         },
 
