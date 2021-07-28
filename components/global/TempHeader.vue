@@ -108,7 +108,12 @@ export default {
         {
           icon: 'mdi-filter',
           title: 'Фильтра',
-          to: '/filters'
+          to: '/filters_new'
+        },
+        {
+          icon: 'mdi-select-group',
+          title: 'Группы фильтров',
+          to: '/filters_group'
         },
         {
           icon: 'mdi-factory',
