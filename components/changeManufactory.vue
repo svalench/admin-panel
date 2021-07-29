@@ -139,8 +139,10 @@ export default {
                  formData.append('img', this.files);
                  formData.append('show_in_start', this.factory.show_in_start==undefined?false:this.factory.show_in_start);
                  formData.append('name', this.factory.name);
-                 for(let i of this.factory.cats){
-                   formData.append('cats', i);
+                 if(this.factory.cats!==undefined){
+                    for(let i of this.factory.cats){
+                      formData.append('cats', i);
+                    }
                  }
 
                  formData.append('description', this.factory.description);
