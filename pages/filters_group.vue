@@ -20,6 +20,18 @@
     </v-col>
     <v-col>
       <v-select
+        v-model="select_manuf"
+          :items="manuf"
+          item-text="name"
+          item-value="id"
+          label="производители"
+          dense
+        multiple
+          outlined
+        ></v-select>
+    </v-col>
+    <v-col>
+      <v-select
         v-model="select_filters"
           :items="values_filters"
           item-text="value"
@@ -46,6 +58,18 @@
           item-text="name"
           item-value="id"
           label="категория"
+          dense
+        multiple
+          outlined
+        ></v-select>
+      </v-card-text>
+      <v-card-text>
+         <v-select
+        v-model="i.manuf"
+          :items="manuf"
+          item-text="name"
+          item-value="id"
+          label="производитель"
           dense
         multiple
           outlined
@@ -81,8 +105,10 @@ export default {
       show:false,
       nameAdd:"",
       select_cat:[],
+      select_manuf:[],
       cats_first:[],
       groups:[],
+      manuf:[],
       values_filters:[],
       select_filters:[],
     }
@@ -100,6 +126,10 @@ export default {
       let data1 = await this.$axios.get(`/admin/catalog/category_first/?limit=99999999`);
       this.cats_first = data1.data.results;
     },
+    async getManuf(){
+      let data1 = await this.$axios.get(`admin/catalog/manufacturers/?limit=99999999`);
+      this.manuf = data1.data.results;
+    },
     async saveFilter(item,k){
       let method = "POST"
       let url = `/admin/catalog/new_filters/`
@@ -108,7 +138,7 @@ export default {
         url = `/admin/catalog/new_filters/${item.id}/`;
       }else{
         k = this.groups.length;
-        item = {name:this.nameAdd,parent:this.select_cat,values:this.select_filters}
+        item = {name:this.nameAdd,parent:this.select_cat,manuf:this.select_manuf,values:this.select_filters}
         this.show = false;
       }
       let data = await this.$axios({method:method,data:item,url:url});
@@ -125,6 +155,7 @@ export default {
       this.getGroups();
       this.getCat()
       this.getValuesFilters()
+      this.getManuf()
   }
 }
 </script>
