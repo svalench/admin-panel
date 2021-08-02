@@ -8,14 +8,14 @@
           Добро пожаловать {{$auth.user.username}} в Админ панель сайта Arhiterm.by
         </v-card-title>
         <v-card-text>
-          Приветсвенный текст сюда
+         Используйте навигационное меню для перехода по разделам
         </v-card-text>
         <v-card-actions>
           <v-spacer />
           <v-btn
             color="primary"
             nuxt
-            to="/inspire"
+            to="/cards"
           >
             Continue
           </v-btn>
