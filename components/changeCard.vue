@@ -99,6 +99,7 @@
           item-value="id"
           label="Родительская категория"
           dense
+        multiple
           outlined
         ></v-select>
     </v-card-title>
@@ -289,12 +290,15 @@ export default {
                     formData.append('filters',  this.filters_select[i]);
                 }
                  formData.append('name', this.card.name);
-                 formData.append('cat', this.card.cat);
+
                  formData.append('discont', this.card.discont);
                  formData.append('filter_id_show', this.card.filter_id_show?this.card.filter_id_show:0);
                  formData.append('s1_id', this.card.s1_id);
                  for(let i of this.card.filters_new){
                    formData.append('filters_new', i);
+                 }
+                 for(let i of this.card.cat){
+                   formData.append('cat', i);
                  }
 
                  formData.append('description', this.card.description);
