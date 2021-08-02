@@ -147,6 +147,7 @@ export default {
       this.groups.splice(this.groups.length-1,1)
     },
     async deleteFilter(i,k){
+      if(!confirm("Вы уверены что хотите удалить?")){return;}
        await this.$axios.delete(`/admin/catalog/new_filters/${i.id}/`)
       this.groups.splice(k,1)
     }
