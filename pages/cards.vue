@@ -32,7 +32,7 @@
     ></v-img>
       </template>
       <template v-slot:item.description="{ item }">
-          {{item.description.length>300?item.description.substring(0,300):item.description}}
+        <span v-html="item.description.length>300?item.description.substring(0,300):item.description"></span>
       </template>
       <template v-slot:item.actions="{ item }">
      <v-btn @click="deleteCard(item)" class="error"> <v-icon light>
