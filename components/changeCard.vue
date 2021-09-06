@@ -23,6 +23,7 @@
   truncate-length="15"
 ></v-file-input>
     </v-img>
+
     <v-card>
         <v-carousel v-model="actualImage">
     <v-carousel-item
@@ -52,6 +53,28 @@
       </v-chip>
     </template>
   </v-file-input>
+      <v-file-input
+    v-model="filesDocs"
+    placeholder="Загрузите документы"
+    label="Сертификаты"
+    multiple
+    prepend-icon="mdi-paperclip"
+  >
+    <template v-slot:selection="{ text }">
+      <v-chip
+        small
+        label
+        color="primary"
+      >
+        {{ text }}
+      </v-chip>
+    </template>
+  </v-file-input>
+      <ul>
+        <li :ref="`docs__${d.id}`"  v-for="(d,k) in card.docs" :key="k">
+          <a :href="d.doc" target="_blank">{{d.doc}}</a> <span @click="deleteDoc(d)" class="list">X</span>
+        </li>
+      </ul>
     </v-col>
     <v-col>
     <v-card-title  v-if="changeRow.name">{{card.name}}<v-icon @click="changeRow.name=false">mdi-lead-pencil</v-icon>
@@ -199,6 +222,7 @@ export default {
         },
           leftDrawer:false,
           files:[],
+          filesDocs:[],
           file1:'',
           select_raw_check:null,
           filters:[],
@@ -275,10 +299,15 @@ export default {
         }
     },
     methods:{
+      deleteDoc(d){
+        if(!confirm("Вы уверены? удалить документ?")){return;}
+        this.$axios.delete(`/admin/catalog/docs/admin/${d.id}/`);
+           this.card.docs.splice( this.card.docs.findIndex(x=>x.id===d.id),1)
+      },
       async getValuesFilters(){
       let data = await this.$axios.get(`/admin/catalog/new_chice/?limit=9999999999`);
       this.filters = data.data.results;
-        console.log(this.filters)
+
     },
       /**
        * удоляет по одной фотки из слайдера
@@ -338,8 +367,14 @@ export default {
                 imgForm.append('parent', this.card.id);
               await this.$axios.post('/admin/catalog/cardproduct_img_admin/',imgForm);
               }
-
-
+           }
+           if(this.filesDocs.length>0){
+              for(let i in this.filesDocs){
+                let simgForm = new FormData();
+                simgForm.append('doc', this.filesDocs[i]);
+                simgForm.append('parent', this.card.id);
+              await this.$axios.post('/admin/catalog/docs/admin/',simgForm);
+              }
            }
             this.$emit('update:rightDrawer', false)
         },
@@ -353,3 +388,18 @@ export default {
     },
 }
 </script>
+<style>
+ .list{
+  content: "x";
+  border-radius: 5px;
+  border: #333333 solid;
+  margin-left: 5px;
+  margin-right: 10px;
+   padding: 2px;
+
+}
+.list:hover{
+  cursor: pointer;
+  background-color: #e82d7d;
+}
+</style>
