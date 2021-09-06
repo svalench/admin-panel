@@ -54,10 +54,13 @@
   </v-file-input>
     </v-col>
     <v-col>
-    <v-card-title  v-if="changeRow.name">{{card.name}}<v-icon @click="changeRow.name=false">mdi-lead-pencil</v-icon></v-card-title>
+    <v-card-title  v-if="changeRow.name">{{card.name}}<v-icon @click="changeRow.name=false">mdi-lead-pencil</v-icon>
+     <v-checkbox style="margin-left: 30px;" v-model="card.is_active" label="Скрыть"></v-checkbox>
+    </v-card-title>
         <v-card-title v-else>
             <v-text-field v-model="card.name" :value="card.name" label="название"></v-text-field>
         <v-icon @click="changeRow.name=true">mdi-check-bold</v-icon>
+
         </v-card-title>
         <v-card-title>
             <v-text-field v-model="card.s1_id" :value="card.s1_id" label="id в 1С"></v-text-field>
@@ -312,6 +315,7 @@ export default {
                     formData.append('filters',  this.filters_select[i]);
                 }
                  formData.append('name', this.card.name);
+                 formData.append('is_active', this.card.is_active);
 
                  formData.append('discont', this.card.discont);
                  formData.append('filter_id_show', this.card.filter_id_show?this.card.filter_id_show:0);
