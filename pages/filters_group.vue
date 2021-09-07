@@ -94,6 +94,12 @@
     </v-card>
   </v-col>
 </v-row>
+    <div class="text-center">
+    <v-pagination
+      v-model="page"
+      :length="length"
+    ></v-pagination>
+  </div>
     </div>
 </template>
 
@@ -111,12 +117,25 @@ export default {
       manuf:[],
       values_filters:[],
       select_filters:[],
+      limit:6,
+      offset:0,
+      length:0,
+      page:1,
+
+    }
+  },
+  watch:{
+    page(nv){
+      this.offset = this.limit*(nv -1);
+      console.log(this.offset)
+      this.getGroups();
     }
   },
   methods:{
     async getGroups(){
-      let data = await this.$axios.get(`/admin/catalog/new_filters/?limit=9999999999`);
+      let data = await this.$axios.get(`/admin/catalog/new_filters/?limit=${this.limit}&offset=${this.offset}`);
       this.groups = data.data.results;
+      this.length = Math.ceil(data.data.count/this.limit)
     },
     async getValuesFilters(){
       let data = await this.$axios.get(`/admin/catalog/new_chice/?limit=9999999999`);
