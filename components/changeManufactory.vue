@@ -24,6 +24,23 @@
   truncate-length="15"
 ></v-file-input>
     </v-img>
+            <v-file-input
+    v-model="filesDocs"
+    placeholder="Загрузите документы"
+    label="Сертификаты"
+    multiple
+    prepend-icon="mdi-paperclip"
+  >
+    <template v-slot:selection="{ text }">
+      <v-chip
+        small
+        label
+        color="primary"
+      >
+        {{ text }}
+      </v-chip>
+    </template>
+  </v-file-input>
     </v-col>
     <v-col>
 
@@ -98,6 +115,7 @@ export default {
         return{
           cats:[],
             files:[],
+          filesDocs:[],
             loading:false,
              changeRow:{name:false, description:false, nikname:false, email:false},
         }
@@ -134,6 +152,7 @@ export default {
     },
     methods:{
         async save(){
+
             if(this.factory.id==undefined){
                 let formData = new FormData();
                  formData.append('img', this.files);
@@ -146,7 +165,15 @@ export default {
                  }
 
                  formData.append('description', this.factory.description);
-               await this.$axios.post(`/admin/catalog/manufacturers/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
+              let d = await this.$axios.post(`/admin/catalog/manufacturers/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
+               if(this.filesDocs.length>0){
+              for(let i in this.filesDocs){
+                let simgForm = new FormData();
+                simgForm.append('doc', this.filesDocs[i]);
+                simgForm.append('parent', d.data.id);
+              await this.$axios.post('/admin/catalog/docs/factory/admin/',simgForm);
+              }
+           }
             }else{
                 delete this.factory.img;
                 let formData = new FormData();
@@ -157,6 +184,14 @@ export default {
                 for(let i of this.factory.cats){
                    formData.append('cats', i);
                  }
+                 if(this.filesDocs.length>0){
+              for(let i in this.filesDocs){
+                let simgForm = new FormData();
+                simgForm.append('doc', this.filesDocs[i]);
+                simgForm.append('parent', this.factory.id);
+              await this.$axios.post('/admin/catalog/docs/factory/admin/',simgForm);
+              }
+           }
                  formData.append('show_in_start', this.factory.show_in_start==undefined?false:this.factory.show_in_start);
                  formData.append('description', this.factory.description);
                 this.$axios.put(`/admin/catalog/manufacturers/${this.factory.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
