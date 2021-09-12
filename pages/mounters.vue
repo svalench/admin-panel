@@ -32,7 +32,7 @@
     ></v-img>
       </template>
       <template v-slot:item.actions="{ item }">
-     <v-btn @click="deleteCard(item)" class="error"> <v-icon light>
+     <v-btn @click="deleteMounter(item)" class="error"> <v-icon light>
               mdi-delete-forever
             </v-icon></v-btn>
       <v-btn @click="showCard(item)" class="accent" >
@@ -88,6 +88,15 @@ export default {
         this.getUserMounter();
     },
     methods:{
+        async deleteMounter(item){
+            if(!confirm('Вы уверены?')){return}
+            await this.$axios.delete(`/mounters/mounters/admin/${item.id}/`);
+            const index = this.mounters.indexOf(item);
+            if (index > -1) {
+                this.mounters.splice(index, 1);
+            }
+            this.count = this.count - 1;
+        },
         async getUserMounter(){
             this.loading = true;
             const { sortBy, sortDesc, page, itemsPerPage } = this.options;
