@@ -41,6 +41,11 @@
       </v-chip>
     </template>
   </v-file-input>
+      <ul>
+        <li :ref="`docs__${d.id}`"  v-for="(d,k) in factory.docs_factories" :key="k">
+          <a :href="d.doc" target="_blank">{{d.doc}}</a> <span @click="deleteDoc(d)" class="list">X</span>
+        </li>
+      </ul>
     </v-col>
     <v-col>
 
@@ -122,6 +127,7 @@ export default {
     },
     props:['factory','rightDrawer'],
     mounted(){
+      console.log(this.factory)
     },
     watch:{
         rightDrawer(newval){
@@ -151,6 +157,11 @@ export default {
            }
     },
     methods:{
+      deleteDoc(d){
+        if(!confirm("Вы уверены? удалить документ?")){return;}
+        this.$axios.delete(`/admin/catalog/docs/factory/admin/${d.id}/`);
+           this.factory.docs_factories.splice( this.factory.docs_factories.findIndex(x=>x.id===d.id),1)
+      },
         async save(){
 
             if(this.factory.id==undefined){
