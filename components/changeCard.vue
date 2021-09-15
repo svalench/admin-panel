@@ -277,7 +277,7 @@ export default {
                 this.imagePreview = null;
             }else{
                 this.select_manuf = this.card.manufacturer;
-                if(this.card.product.length){
+                if(this.card.product && this.card.product.length){
                     this.raw_check = this.card.product[0].filter_dict;
 
                   }
@@ -335,23 +335,26 @@ export default {
                 }else{
                  // delete this.card.img;
                 }
-                 if(this.select_manuf!=undefined){
+                 if(this.select_manuf!==undefined){
                   formData.append('manufacturer', this.select_manuf);
                   this.card.manufacturer = this.select_manuf;
                    this.card.manufacturer_name = this.manufacturers.filter(x=>x.id==this.select_manuf)[0].name ;
                 }
+                 if(this.filters_select===undefined){this.filters_select=[]}
                 for(let i in this.filters_select){
                     formData.append('filters',  this.filters_select[i]);
                 }
                  formData.append('name', this.card.name);
-                 formData.append('is_active', this.card.is_active);
+                 formData.append('is_active', this.card.is_active===undefined?false:this.card.is_active);
 
                  formData.append('discont', this.card.discont);
                  formData.append('filter_id_show', this.card.filter_id_show?this.card.filter_id_show:0);
                  formData.append('s1_id', this.card.s1_id);
+                 if( this.card.filters_new===undefined){ this.card.filters_new=[]}
                  for(let i of this.card.filters_new){
                    formData.append('filters_new', i);
                  }
+                 if(this.card.cat===undefined){alert("Не выбрана категория"); return;}
                  for(let i of this.card.cat){
                    formData.append('cat', i);
                  }
@@ -359,8 +362,24 @@ export default {
                  formData.append('description', this.card.description);
                  formData.append('multiplicity', this.card.multiplicity);
                  formData.append('units', this.card.units);
-           await this.$axios.patch(`/admin/catalog/cardproduct_admin/${this.card.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
-           if(this.files_slider.length>0){
+                 if (this.card.id){
+                   await this.$axios.patch(`/admin/catalog/cardproduct_admin/${this.card.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
+                 }else{
+
+                  let d =  await this.$axios.post(`/admin/catalog/cardproduct_admin/`,formData,{headers: {'Content-Type': 'multipart/form-data'}}).catch(function(err){
+                     if (err.response) {
+                       let str = "";
+                       for(let i in err.response.data){
+                         str+= `${i} - ${err.response.data[i][0]}`
+                       }
+                       alert(str);
+                       return;
+                     }
+                   });
+                  if(d===undefined){return ;}
+                 }
+
+            if(this.files_slider.length>0){
               for(let i in this.files_slider){
                 let imgForm = new FormData();
                 imgForm.append('img', this.files_slider[i]);

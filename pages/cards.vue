@@ -16,6 +16,9 @@
           <v-col cols="1">
             <v-btn :href="$axios.defaults.baseURL+'/download/product/'" class="primary"><v-icon>mdi-file-download</v-icon></v-btn>
           </v-col>
+          <v-col cols="1">
+            <v-btn  @click="showCard({})"  class="primary"><v-icon>mdi-plus</v-icon></v-btn>
+          </v-col>
           <v-col>
         <v-text-field
           v-model="search"
@@ -32,7 +35,7 @@
     ></v-img>
       </template>
       <template v-slot:item.description="{ item }">
-        <span v-html="item.description.length>300?item.description.substring(0,300):item.description"></span>
+        <span v-html="(item.description && item.description.length>300)?item.description.substring(0,300):item.description"></span>
       </template>
       <template v-slot:item.actions="{ item }">
      <v-btn @click="deleteCard(item)" class="error"> <v-icon light>
@@ -145,7 +148,7 @@ export default {
             this.rightDrawer = !this.rightDrawer;
         },
         async getCat(){
-            if(this.card.cat!=null){
+            if(this.card.cat!==undefined && this.card.cat!==null ){
                  this.currentCat = this.cats.find(x=>x.id==this.card.cat);
                  if(this.currentCat!==undefined){
                    this.currentFirstCat = this.cats_first.find(x=>x.id==this.currentCat.parent);
@@ -178,8 +181,16 @@ export default {
         async getCardProducts(){
             this.loading = true;
             const { sortBy, sortDesc, page, itemsPerPage } = this.options;
+          console.log(sortBy)
+          console.log(sortDesc)
+          let ordering = "";
+          if(sortBy && sortBy.length){
+            for(let i in sortBy){
+              ordering += `&ordering=${sortDesc[i]?'':'-'}${sortBy[i]}`
+            }
+          }
              this.offset = itemsPerPage*(page-1);
-           let data = await this.$axios.get(`/admin/catalog/cardproduct_admin/?limit=${itemsPerPage}&offset=${this.offset}`);
+           let data = await this.$axios.get(`/admin/catalog/cardproduct_admin/?limit=${itemsPerPage}&offset=${this.offset}${ordering}`);
            this.cardproducts = data.data.results;
            this.count = data.data.count;
            this.loading = false;
