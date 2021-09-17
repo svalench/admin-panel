@@ -225,6 +225,10 @@ export default {
       if(this.list[this.column].id!==undefined){
         data = await this.$axios.put(`/admin/catalog/products_admin/${this.list[this.column].id}/`,this.list[this.column]);
       }else{
+        for(let i in this.list[this.column]){
+          if(typeof(this.list[this.column][i])=="string" && !this.list[this.column][i].length)
+          this.list[this.column][i] = null;
+        }
         data = await this.$axios.post(`/admin/catalog/products_admin/`,this.list[this.column]);
         this.list[this.column] = data.data;
       }
