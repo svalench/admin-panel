@@ -54,7 +54,7 @@
             <v-text-field v-model="factory.name" :value="factory.name" label="название"></v-text-field>
         <v-icon @click="changeRow.name=true">mdi-check-bold</v-icon>
         </v-card-title>
-
+       <v-checkbox style="margin-left: 30px;" v-model="factory.is_active" label=" показать в каталоге"></v-checkbox>
     <v-card-text>
 
 <div v-if="changeRow.description">
@@ -169,6 +169,7 @@ export default {
                  formData.append('img', this.files);
                  formData.append('show_in_start', this.factory.show_in_start==undefined?false:this.factory.show_in_start);
                  formData.append('name', this.factory.name);
+                 formData.append('is_active', this.factory.is_active);
                  if(this.factory.cats!==undefined){
                     for(let i of this.factory.cats){
                       formData.append('cats', i);
@@ -188,6 +189,7 @@ export default {
             }else{
                 delete this.factory.img;
                 let formData = new FormData();
+                formData.append('is_active', this.factory.is_active);
                 if(this.files.name!=undefined){
                     formData.append('img', this.files);
                 }

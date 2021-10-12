@@ -37,7 +37,7 @@
             <v-text-field v-model="mantazhnik.whoiam.last_name" :value="mantazhnik.whoiam.last_name" label="фамилия"></v-text-field>
         <v-icon @click="changeRow.name=false">mdi-check-bold</v-icon>
         </v-card-title>
-      <v-checkbox style="margin-left: 30px;" v-model="mantazhnik.is_active" label="Скрыть"></v-checkbox>
+      <v-checkbox style="margin-left: 30px;" v-model="mantazhnik.is_active" label=" показать в каталоге"></v-checkbox>
     <v-card-title>
          <v-text-field ref="price" v-model="mantazhnik.price" type="number" :value="mantazhnik.price" label="скидка"></v-text-field>
     </v-card-title>
