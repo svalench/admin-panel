@@ -32,11 +32,12 @@
     <v-col>
 
     <v-card-title v-if="!changeRow.name" >{{mantazhnik!=undefined?mantazhnik.whoiam.first_name:''}} {{mantazhnik!=undefined?mantazhnik.whoiam.last_name:''}}<v-icon @click="changeRow.name=true">mdi-lead-pencil</v-icon></v-card-title>
-        <v-card-title v-else>
+      <v-card-title v-else>
             <v-text-field v-model="mantazhnik.whoiam.first_name" :value="mantazhnik.whoiam.first_name" label="имя"></v-text-field>
             <v-text-field v-model="mantazhnik.whoiam.last_name" :value="mantazhnik.whoiam.last_name" label="фамилия"></v-text-field>
         <v-icon @click="changeRow.name=false">mdi-check-bold</v-icon>
         </v-card-title>
+      <v-checkbox style="margin-left: 30px;" v-model="mantazhnik.is_active" label="Скрыть"></v-checkbox>
     <v-card-title>
          <v-text-field ref="price" v-model="mantazhnik.price" type="number" :value="mantazhnik.price" label="скидка"></v-text-field>
     </v-card-title>
@@ -278,6 +279,7 @@ export default {
             formData.append('description', this.mantazhnik.description!=undefined? this.mantazhnik.description:'');
             formData.append('about', this.mantazhnik.about!=undefined?this.mantazhnik.about:'');
             formData.append('price', this.mantazhnik.price);
+            formData.append('is_active', this.mantazhnik.is_active);
             formData.append('user', this.mantazhnik.user);
             if(this.mantazhnik.tags!==undefined && this.mantazhnik.tags.length>0){
               for(let i of this.mantazhnik.tags){
@@ -315,6 +317,7 @@ export default {
             this.save_btn_disabled = false;
             this.$emit('updarrayUser',res)
             this.close()
+          window.location.reload()
         },
         close(){
             this.$emit('update:rightDrawer', false);
