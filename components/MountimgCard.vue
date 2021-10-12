@@ -38,7 +38,7 @@
         <v-icon @click="changeRow.name=false">mdi-check-bold</v-icon>
         </v-card-title>
     <v-card-title>
-         <v-text-field ref="price" v-model="mantazhnik.price" type="number" :value="mantazhnik.price" label="цена"></v-text-field>
+         <v-text-field ref="price" v-model="mantazhnik.price" type="number" :value="mantazhnik.price" label="скидка"></v-text-field>
     </v-card-title>
     <v-card-text>
 <div v-if="changeRow.description">
@@ -253,11 +253,11 @@ export default {
         this.tags = data.data.results;
       },
         async save(){
-        if(this.mantazhnik.price===undefined){
-            alert('Не указана цена!');
-            this.$refs.price.focus();
-            return;
-        }
+        // if(this.mantazhnik.price===undefined){
+        //     alert('Не указана цена!');
+        //     this.$refs.price.focus();
+        //     return;
+        // }
              let formData = new FormData();
              let formDataUser = new FormData();
              if(this.files.name!=undefined){
