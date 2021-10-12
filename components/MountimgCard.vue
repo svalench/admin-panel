@@ -110,6 +110,8 @@
        <v-btn
         color="teal darken-1"
         text
+        ref="save_btn"
+        :disabled="save_btn_disabled"
         @click="save"
       >
         сохранить
@@ -191,6 +193,7 @@
 export default {
     data(){
         return{
+          save_btn_disabled:false,
           files:[],
           file1:'',
           sex:0,
@@ -253,11 +256,11 @@ export default {
         this.tags = data.data.results;
       },
         async save(){
-        // if(this.mantazhnik.price===undefined){
-        //     alert('Не указана цена!');
-        //     this.$refs.price.focus();
-        //     return;
-        // }
+        if(this.mantazhnik.price===undefined){
+            this.mantazhnik.price = 0;
+            return;
+        }
+        this.save_btn_disabled = true;
              let formData = new FormData();
              let formDataUser = new FormData();
              if(this.files.name!=undefined){
@@ -288,8 +291,10 @@ export default {
             let resUser = await this.$axios.patch(`users/users/${this.mantazhnik.user}/`,formDataUser);
             if(this.mantazhnik.id!=undefined){
              res  = await this.$axios.patch(`/users/mounting/${this.mantazhnik.id}/`,formData);
+             res['thisisnew'] = false;
             }else{
               res = await this.$axios.post(`/users/mounting/`,formData);
+              res['thisisnew'] = true;
             }
             if(Array.isArray(this.phone_s)){
                for(let i of this.phone_s){
@@ -307,7 +312,9 @@ export default {
              }
 
             this.$emit('update:newuserid',  null);
-
+            this.save_btn_disabled = false;
+            this.$emit('updarrayUser',res)
+            this.close()
         },
         close(){
             this.$emit('update:rightDrawer', false);

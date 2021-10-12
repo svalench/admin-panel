@@ -49,7 +49,7 @@
       fixed
       width="50%"
     >
-    <MountingCard :newuserid.sync="newuserid" :userid.sync="userid" :rightDrawer.sync="rightDrawer" :mantaz.sync="mounter" />
+    <MountingCard :newuserid.sync="newuserid" :userid.sync="userid" @updarrayUser="updarrayUser" :rightDrawer.sync="rightDrawer" :mantaz.sync="mounter" />
     <ModalChoise :newuserid.sync="newuserid"  :userid.sync="userid" :rightDrawer.sync="rightDrawer" :dialog.sync="dialog" />
     </v-navigation-drawer>
     </div>
@@ -88,6 +88,11 @@ export default {
         this.getUserMounter();
     },
     methods:{
+        updarrayUser(mounterNew){
+            if(mounterNew['thisisnew']){
+              this.mounters.push(mounterNew.data)
+            }
+        },
         async deleteMounter(item){
             if(!confirm('Вы уверены?')){return}
             await this.$axios.delete(`/mounters/mounters/admin/${item.id}/`);
