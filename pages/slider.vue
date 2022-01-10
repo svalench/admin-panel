@@ -31,6 +31,15 @@
       :src="item.img"
     ></v-img>
       </template>
+           <template v-slot:item.video="{ item }">
+              <video
+              width="80"
+            :src="item.video"
+          ></video>
+           </template>
+          <template v-slot:item.color="{ item }">
+            <div :style="'min-width: 40px; min-height: 30px; background-color: '+item.color"></div>
+          </template>
       <template v-slot:item.show="{ item }">
           <v-chip
         :color="item.show?'green':'yellow'"
@@ -100,8 +109,11 @@ export default {
           },
           { text: 'описание', value: 'description' },
           { text: 'изображение', value: 'img' },
+          { text: 'video', value: 'video' },
+          { text: 'цвет', value: 'color' },
           { text: 'на главной', value: 'show' },
           { text: 'действия', value: 'actions' },
+          { text: 'ссылка', value: 'link' },
           { text: 'позиция', value: 'position' },
         ]
       },

@@ -3,6 +3,7 @@
         <v-card :loading="loading" style="margin-top:3%;">
             <v-row>
                 <v-col cols="6">
+                  <v-row>
                     <v-img
                     :src="slider.img"
                     >
@@ -14,6 +15,21 @@
                                 truncate-length="15"
                             ></v-file-input>
                     </v-img>
+                  </v-row>
+                  <v-row>
+                    <v-img
+                    :src="slider.video"
+                    >
+                            <v-file-input
+                                hide-input
+                                chips
+                                v-model="videos"
+                                :value="slider.video"
+                                truncate-length="15"
+                            ></v-file-input>
+                    </v-img>
+                  </v-row>
+
                 </v-col>
                 <v-col>
                     <v-row>
@@ -27,6 +43,12 @@
                                     v-model="slider.description"
                                     :value="slider.description"
                             ></v-textarea>
+                    </v-row>
+                  <v-row>
+                        <v-text-field v-model="slider.link" :value="slider.link" label="ссылка"></v-text-field>
+                    </v-row>
+                  <v-row>
+                        <v-color-picker v-model="slider.color" :value="slider.color" label="цвет"></v-color-picker>
                     </v-row>
                     <v-row>
                         <v-checkbox
@@ -66,6 +88,7 @@ export default {
     data(){
         return{
             files:[],
+            videos:[],
             loading:false,
         }
     },
@@ -75,8 +98,11 @@ export default {
             if(this.slider.id==undefined){
                 let formData = new FormData();
                  formData.append('img', this.files);
+                 formData.append('video', this.videos);
                  formData.append('show', this.slider.show?true:false);
                  formData.append('title', this.slider.title);
+                 formData.append('link', this.slider.link);
+                 formData.append('color', this.slider.color);
                  formData.append('position', this.slider.position);
                  formData.append('description', this.slider.description);
                await this.$axios.post(`/admin/pages/slider/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
@@ -86,12 +112,17 @@ export default {
                 if(this.files.name!=undefined){
                     formData.append('img', this.files);
                 }
+                if(this.videos.name!=undefined){
+                    formData.append('img', this.videos);
+                }
                  formData.append('title', this.slider.title);
                  formData.append('show', this.slider.show);
+                 formData.append('link', this.slider.link);
+                 formData.append('color', this.slider.color);
                  formData.append('position', this.slider.position);
                  formData.append('description', this.slider.description);
                 this.$axios.put(`/admin/pages/slider/${this.slider.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
-            
+
             }
             this.$emit('update:rightDrawer', false)
         },

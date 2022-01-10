@@ -8,6 +8,11 @@
   </v-card-text>
   <v-card-text v-for="(i,k) in values_filters" :key="k">
       <v-text-field v-model="i.value"></v-text-field>
+    <v-row>
+      <v-col> <v-text-field type="number" v-model="i.position"></v-text-field></v-col>
+      <v-col><span>Чем выше цифра тем выше в выводе фильтр</span></v-col>
+    </v-row>
+
     <v-btn @click="saveFilter(i,k)"><v-icon>mdi-content-save</v-icon></v-btn>
     <v-btn @click="deleteItem(i,k)" v-show="i.id"><v-icon>mdi-delete</v-icon></v-btn>
   </v-card-text>
@@ -26,6 +31,7 @@ export default {
     async getValuesFilters(){
       let data = await this.$axios.get(`/admin/catalog/new_chice/?limit=9999999999`);
       this.values_filters = data.data.results;
+      console.log(this.values_filters)
     },
     async saveFilter(item,k){
       let method = "POST"
