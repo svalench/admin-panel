@@ -86,7 +86,7 @@
 
         </v-card-title>
         <v-card-title>
-            <v-text-field v-model="card.s1_id" :value="card.s1_id" label="id в 1С"></v-text-field>
+            <v-text-field v-model="card.position" :value="card.position" label="Позиция в каталоге"></v-text-field>
         </v-card-title>
       <v-card-title>
             <v-text-field v-model="card.discont" :value="card.discont?card.discont:card.discont=0" label="Скидка"></v-text-field>
@@ -349,7 +349,7 @@ export default {
 
                  formData.append('discont', this.card.discont);
                  formData.append('filter_id_show', this.card.filter_id_show?this.card.filter_id_show:0);
-                 formData.append('s1_id', this.card.s1_id);
+                 formData.append('position', this.card.position);
                  if( this.card.filters_new===undefined){ this.card.filters_new=[]}
                  for(let i of this.card.filters_new){
                    formData.append('filters_new', i);

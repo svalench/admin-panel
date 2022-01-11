@@ -44,6 +44,12 @@
     <v-row>
       <contentPreview @updateImg="updateImg" @updateData="setData" :action="'updateData'" :title.sync="i.title_block" :text.sync="i.description" :img="i.img" />
     </v-row>
+    <v-row>
+
+      <week-day-work-card @deleteItem="delWorkDay" @saveItem="saveWorkTime" v-for="(i,k) in worktime" :key="k" :item.sync="i"></week-day-work-card>
+         <week-day-work-card @deleteItem="delWorkDay" @saveItem="saveWorkTime" :item.sync="newItemWD"></week-day-work-card>
+
+    </v-row>
     </div>
     </div>
 </template>
@@ -53,9 +59,11 @@
 import textEditor from "~/components/global/textEditor";
 import cardComponent from "~/components/cardComponent";
 import contentPreview from "~/components/contentPreview";
+import WeekDayWorkCard from "~/components/weekDayWorkCard";
 export default {
   middleware: 'auth',
   components:{
+    WeekDayWorkCard,
     textEditor,
     cardComponent,
     contentPreview,
@@ -67,7 +75,8 @@ export default {
           activeKey:null,
           content: '',
           phones:[],
-
+          worktime:[],
+          newItemWD:{},
         }
     },
   computed:{
@@ -78,8 +87,38 @@ export default {
   mounted() {
       this.getData();
       this.getAllPhones();
+      this.getWorkTime();
   },
   methods: {
+    async getWorkTime(){
+      let data = await this.$axios.get(`/administrate/get/worktime/?limit=9999`);
+      this.worktime = data.data.results;
+      console.log(this.worktime)
+    },
+    async delWorkDay(item){
+      if(!confirm('Вы уверены?')){return}
+      let k = this.worktime.findIndex(x=>x.id===item.id)
+      let data = await this.$axios.delete(`/administrate/get/worktime/${item.id}`);
+      this.worktime.splice(k,1);
+    },
+    async saveWorkTime(item){
+      let method = 'post';
+      let update = false;
+      let link = '';
+      if(item.id){
+        method = 'put';
+        update = true;
+        link = `${item.id}/`
+      }
+      let data = await this.$axios[method](`/administrate/get/worktime/${link}`, item);
+      if(update){
+       let index = this.worktime.findIndex(x=>x.id===data.data.id);
+       this.worktime[index] = data.data;
+      }else{
+        this.worktime.push(data.data)
+      }
+      this.newItemWD = {};
+    },
         addPhone(){
         this.phones.push({phone_number:''})
     },
