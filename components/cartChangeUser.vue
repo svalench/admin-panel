@@ -31,7 +31,7 @@
 
     <v-card-title v-if="!changeRow.nikname">{{user.username}} <v-icon v-if="user.id==undefined" @click="changeRow.nikname=true">mdi-lead-pencil</v-icon></v-card-title>
     <v-card-title v-else>
-      <v-text-field v-model="user.username" :value="user.username" label="nikname пользоателя (желательно email)"></v-text-field>
+      <v-text-field v-model="user.username" :value="user.username" label="nikname пользователя (желательно email)"></v-text-field>
       <v-icon @click="changeRow.nikname=false">mdi-check-bold</v-icon>
     </v-card-title>
     <v-card-title v-if="user.id==undefined">

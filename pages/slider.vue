@@ -35,6 +35,7 @@
               <video
               width="80"
             :src="item.video"
+              controls
           ></video>
            </template>
           <template v-slot:item.color="{ item }">

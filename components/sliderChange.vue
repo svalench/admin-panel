@@ -14,20 +14,30 @@
                                 :value="slider.img"
                                 truncate-length="15"
                             ></v-file-input>
+
                     </v-img>
+                    <v-btn color="red" @click="deleteFile('img')">Удалить изображение</v-btn>
                   </v-row>
                   <v-row>
-                    <v-img
+                    <video
                     :src="slider.video"
+                    controls
+                    width="300px"
                     >
                             <v-file-input
+                              style="display: none;"
                                 hide-input
+                                ref="videotag"
                                 chips
                                 v-model="videos"
                                 :value="slider.video"
                                 truncate-length="15"
                             ></v-file-input>
-                    </v-img>
+
+                    </video>
+                     <v-btn color="red" @click="deleteFile('video')">Удалить видео</v-btn>
+                    <v-btn v-if="slider.video"  @click="$refs.videotag.$refs.input.click()" color="blue">Изменить видео</v-btn>
+                    <v-btn v-if="!slider.video"  @click="$refs.videotag.$refs.input.click()" color="green">Добавить видео</v-btn>
                   </v-row>
 
                 </v-col>
@@ -105,7 +115,9 @@ export default {
                  formData.append('color', this.slider.color);
                  formData.append('position', this.slider.position);
                  formData.append('description', this.slider.description);
-               await this.$axios.post(`/admin/pages/slider/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
+              let data =  await this.$axios.post(`/admin/pages/slider/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
+              this.slider = data.data;
+              this.close();
             }else{
                 delete this.slider.img;
                 let formData = new FormData();
@@ -113,7 +125,7 @@ export default {
                     formData.append('img', this.files);
                 }
                 if(this.videos.name!=undefined){
-                    formData.append('img', this.videos);
+                    formData.append('video', this.videos);
                 }
                  formData.append('title', this.slider.title);
                  formData.append('show', this.slider.show);
@@ -121,7 +133,9 @@ export default {
                  formData.append('color', this.slider.color);
                  formData.append('position', this.slider.position);
                  formData.append('description', this.slider.description);
-                this.$axios.put(`/admin/pages/slider/${this.slider.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
+                let data = this.$axios.put(`/admin/pages/slider/${this.slider.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
+                this.slider = data;
+                this.close();
 
             }
             this.$emit('update:rightDrawer', false)
@@ -129,6 +143,17 @@ export default {
         close(){
             this.$emit('update:rightDrawer', false)
         },
+      /**
+       * очищает одно поле
+       * @param name
+       */
+      deleteFile(name){
+        let formData = {};
+        formData[name] = null;
+         let data =  this.$axios.patch(`/admin/pages/slider/${this.slider.id}/`,formData);
+        this.slider = data;
+        this.close();
+      }
 
     },
 }

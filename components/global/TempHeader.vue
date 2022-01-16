@@ -92,7 +92,7 @@ export default {
         },
         {
           icon: 'mdi-account-box-multiple',
-          title: 'Пользоатели',
+          title: 'Пользователи',
           to: '/usersList'
         },
         {
