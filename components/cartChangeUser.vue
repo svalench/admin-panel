@@ -37,6 +37,9 @@
     <v-card-title v-if="user.id==undefined">
       <v-text-field v-model="user.password" :value="user.password" label="пароль"></v-text-field>
     </v-card-title>
+      <v-card-title>
+         <v-text-field ref="discount" v-model="user.discount" type="number" :value="user.discount" label="скидка"></v-text-field>
+    </v-card-title>
     <v-card-text>
         <div class="my-4 subtitle-1" v-if="changeRow.username">
             <v-text-field v-model="user.first_name" :value="user.first_name" label="first name"></v-text-field>
@@ -199,6 +202,7 @@ export default {
             formData.append('email', this.user.email?this.user.email:'');
             formData.append('description', this.user.description?this.user.description:'');
              formData.append('birth_date', this.user.birth_date?this.user.birth_date:'');
+             formData.append('discount', this.user.discount?this.user.discount:0);
            if(id==undefined){
              let adata = {username:this.user.username,  password:this.user.password, password2:this.user.password}
              let users = await this.$axios.post('/registration/backend/registration/', adata);
