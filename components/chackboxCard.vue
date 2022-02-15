@@ -161,18 +161,25 @@ export default {
     async addCharacteristic(){
       let data =  await  this.$axios.post(`/admin/catalog/product_filters_row/`,{name:this.checkedCh.name,parent:this.checkedCh.id,value:this.newVal})
       this.list[this.column].filter_dict.push(data.data)
-       this.checkedCh = null;
+      let res = await this.updProductFields();
+      if(res){
+        this.checkedCh = null;
       this.newVal = null;
-      this.updProductFields()
       this.delCheckedCharacterisitcs()
+      }else{
+        this.list[this.column].filter_dict.splice(this.list[this.column].filter_dict.findIndex(x=>x.id===data.data.id), 1)
+      }
     },
     /**
      * обновляет поля на сервере
      * @returns {Promise<void>}
      */
     async updProductFields(){
+      if(this.list[this.column].id===undefined){
+        alert("Прежде сохраните продукт");return false;
+      }
       let dataP = await this.$axios.put(`/admin/catalog/products_admin/${this.list[this.column].id}/`,{filters:this.list[this.column].filter_dict.map(x=>x.id),parent:this.list[this.column].parent,name:this.list[this.column].name,s1_id:this.list[this.column].s1_id})
-
+      return true;
     },
     /**
      *  обнуление полей добавленного товара
@@ -182,7 +189,7 @@ export default {
         availability: false,
         count: '',
         discont: '',
-        filter_dict: '',
+        filter_dict: [],
         filters: [],
         filters2: [],
         name: '',
@@ -199,11 +206,14 @@ export default {
      */
     async addrow(){
       this.add_to = JSON.parse(JSON.stringify(this.list[this.column]));
+      console.log(this.add_to)
       for(let i of Object.keys(this.add_to)){
         if(i=="parent"){
             continue;
         }else if(i=="filters"){
-            continue;
+          console.log(this.add_to[i])
+             this.add_to[i] = [];
+          continue;
         }else if(i=="availability"){
             continue;
         }else if(i=="filters2"){
@@ -211,6 +221,7 @@ export default {
         }
         this.add_to[i] = '';
       }
+      this.add_to['filter_dict'] = []
       delete this.add_to.id;
       let switchTo = this.list.length;
         this.list.push(this.add_to);
@@ -229,8 +240,20 @@ export default {
           if(typeof(this.list[this.column][i])=="string" && !this.list[this.column][i].length)
           this.list[this.column][i] = null;
         }
-        data = await this.$axios.post(`/admin/catalog/products_admin/`,this.list[this.column]);
-        this.list[this.column] = data.data;
+        data = await this.$axios.post(`/admin/catalog/products_admin/`,this.list[this.column]).catch(function (e){
+          console.log(e.response.data);
+          let msg = '';
+          for(let i in e.response.data){
+             msg += `не заполнено ${i}; `;
+          }
+          alert(msg);
+        });
+        if(data){
+          console.log(data)
+         data.data['filter_dict'] = []
+           this.list[this.column] = data.data;
+        }
+
       }
     },
     /**
