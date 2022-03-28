@@ -17,6 +17,9 @@
                             <v-col>
                                <v-text-field v-model="addCat.title" :value="addCat.title" label="подпись"></v-text-field>
                             </v-col>
+                         <v-col>
+                           <v-text-field type="numeric" v-model="addCat.position" :value="addCat.position" label="Позиция"></v-text-field>
+                         </v-col>
                             <v-col>
                                 <v-textarea
                                     outlined
@@ -142,7 +145,7 @@ export default {
             updGlobalCat:false,
             updSecondCat:false,
             addSecondCat:false,
-            addCat:{name:'',title:'',description:'',show_in_start:false},
+            addCat:{name:'',title:'',description:'',show_in_start:false, position:0},
             addSecondCatObj:{name:'',title:'',description:''},
         }
     },
@@ -201,6 +204,7 @@ export default {
                 }
                 formData.append('name', this.addCat.name);
                 formData.append('title', this.addCat.title);
+                formData.append('position', this.addCat.position);
                 formData.append('description', this.addCat.description);
                 formData.append('show_in_start', this.addCat.show_in_start==undefined?false:this.addCat.show_in_start);
             if(this.updGlobalCat){;
