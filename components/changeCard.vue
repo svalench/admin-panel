@@ -376,7 +376,7 @@ export default {
                        return;
                      }
                    });
-                  if(d===undefined){return ;}
+                  if(d===undefined){return ;}else{this.card = d.data}
                  }
 
             if(this.files_slider.length>0){
