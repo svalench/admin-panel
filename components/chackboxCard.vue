@@ -158,8 +158,8 @@ export default {
      * добавляет хар-ки товару
      * @returns {Promise<void>}
      */
-    async addCharacteristic(payload = undefined){
-      if(payload===undefined){payload={name:this.checkedCh.name,parent:this.checkedCh.id,value:this.newVal}}
+    async addCharacteristic(payload = undefined, upd = false){
+      if(!upd){payload={name:this.checkedCh.name,parent:this.checkedCh.id,value:this.newVal}}
       let data =  await  this.$axios.post(`/admin/catalog/product_filters_row/`,payload)
       this.list[this.column].filter_dict.push(data.data)
       let res = await this.updProductFields();
@@ -246,7 +246,7 @@ export default {
       for(let i of filter_dict){
         console.log(i)
         let data = {name:i.name,parent:data.data.id,value:i.newVal};
-        this.addCharacteristic(data);
+        this.addCharacteristic(data, true);
       }
     },
     /**
