@@ -8,9 +8,9 @@
     <v-col>
       <div >
         <v-text-field label="название" v-model="list[column].name" :value="ifset(list[column],'name')"> </v-text-field>
-        <v-text-field label="количество" v-model="list[column].count" :value="ifset(list[column],'count')"> </v-text-field>
-        <v-text-field label="цена" v-model="list[column].price" :value="ifset(list[column],'price')"> </v-text-field>
-        <v-text-field label="цена со скидкой" v-model="list[column].discont" :value="ifset(list[column],'discont')"> </v-text-field>
+        <v-text-field label="количество" v-model="list[column].count" :value="ifset(list[column],'count', null)"> </v-text-field>
+        <v-text-field label="цена" v-model="list[column].price" :default='null' :value="ifset(list[column],'price', null)"> </v-text-field>
+        <v-text-field label="цена со скидкой" v-model="list[column].discont" :value="ifset(list[column],'discont', null)"> </v-text-field>
         <v-text-field label="ID  1С" v-model="list[column].s1_id" :value="ifset(list[column],'s1_id')"> </v-text-field>
         <v-text-field label="вес" v-model="list[column].weight" :value="ifset(list[column],'weight')"> </v-text-field>
         </div>
@@ -119,8 +119,8 @@ export default {
 
   },
   methods: {
-    ifset(i, name) {
-      return i !== undefined ? i[name] : ''
+    ifset(i, name, default_value='') {
+      return i !== undefined ? i[name] : default_value
     },
     /**
      * удаляет характеристику товара
@@ -187,8 +187,8 @@ export default {
     addNullRow(){
       this.add_to = {
         availability: false,
-        count: '',
-        discont: '',
+        count: null,
+        discont: null,
         filter_dict: [],
         filters: [],
         filters2: [],
