@@ -56,7 +56,7 @@
       fixed
       width="60%"
     >
-    <changeCard :rightDrawer.sync="rightDrawer" :card.sync="card" :manufacturers="manufacturers" :currentCat="currentCat" :currentFirstCat.sync="currentFirstCat" :cats_first="cats_first" :cats="cats" />
+    <changeCard :rightDrawer.sync="rightDrawer" @add_to_arr="add_to_arr" :card.sync="card" :manufacturers="manufacturers" :currentCat="currentCat" :currentFirstCat.sync="currentFirstCat" :cats_first="cats_first" :cats="cats" />
     </v-navigation-drawer>
     </div>
 </template>
@@ -133,6 +133,9 @@ export default {
       },
     },
     methods:{
+      add_to_arr(data){
+        this.cardproducts.push(data)
+      },
         async deleteCard(item){
              if(!confirm('Вы уверены?')){return}
             await this.$axios.delete(`/admin/catalog/cardproduct_admin/${item.id}/`);

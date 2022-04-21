@@ -9,7 +9,7 @@
       <div >
         <v-text-field label="название" v-model="list[column].name" :value="ifset(list[column],'name')"> </v-text-field>
         <v-text-field label="количество" v-model="list[column].count" :default="null" :value="ifset(list[column],'count', null)"> </v-text-field>
-        <v-text-field label="цена" :default="null" v-model="list[column].price" :default='null' :value="ifset(list[column],'price', null)"> </v-text-field>
+        <v-text-field label="цена" v-model="list[column].price" :default='null' :value="ifset(list[column],'price', null)"> </v-text-field>
         <v-text-field label="цена со скидкой" :default="null" v-model="list[column].discont" :value="ifset(list[column],'discont', null)"> </v-text-field>
         <v-text-field label="ID  1С" v-model="list[column].s1_id" :value="ifset(list[column],'s1_id')"> </v-text-field>
         <v-text-field label="вес" v-model="list[column].weight" :value="ifset(list[column],'weight')"> </v-text-field>
@@ -29,7 +29,7 @@
       <v-card-actions>
       <v-btn @click="save" color="blue"><v-icon>mdi-content-save</v-icon></v-btn>
         <v-btn @click="addrow" color="green"><v-icon>mdi-plus</v-icon></v-btn>
-       <v-btn color="orange"><v-icon>mdi-cancel</v-icon></v-btn>
+       <v-btn color="orange" @click="copy"><v-icon>mdi-content-copy</v-icon></v-btn>
        <v-btn @click="deleteRow" color="red"><v-icon>mdi-delete</v-icon></v-btn>
     </v-card-actions>
     </v-col>
@@ -158,8 +158,9 @@ export default {
      * добавляет хар-ки товару
      * @returns {Promise<void>}
      */
-    async addCharacteristic(){
-      let data =  await  this.$axios.post(`/admin/catalog/product_filters_row/`,{name:this.checkedCh.name,parent:this.checkedCh.id,value:this.newVal})
+    async addCharacteristic(payload = undefined){
+      if(payload===undefined){payload={name:this.checkedCh.name,parent:this.checkedCh.id,value:this.newVal}}
+      let data =  await  this.$axios.post(`/admin/catalog/product_filters_row/`,payload)
       this.list[this.column].filter_dict.push(data.data)
       let res = await this.updProductFields();
       if(res){
@@ -226,6 +227,27 @@ export default {
       let switchTo = this.list.length;
         this.list.push(this.add_to);
         this.column = switchTo;
+    },
+    async copy(){
+      let data = await this.$axios.post(`/admin/catalog/products_admin/`,this.list[this.column]).catch(function (e){
+          console.log(e.response.data);
+          let msg = '';
+          for(let i in e.response.data){
+             msg += `не заполнено ${i}; `;
+          }
+          alert(msg);
+        });
+      data.data['filter_dict'] = []
+      let switchTo = this.list.length;
+      let filter_dict = this.list[this.column]['filter_dict'];
+      console.log(filter_dict)
+      this.list.push(data.data);
+      this.column = switchTo;
+      for(let i of filter_dict){
+        console.log(i)
+        let data = {name:i.name,parent:i.id,value:i.newVal};
+        this.addCharacteristic(data);
+      }
     },
     /**
      * сохраняет поля товара
