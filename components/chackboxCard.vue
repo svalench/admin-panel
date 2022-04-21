@@ -245,7 +245,7 @@ export default {
       this.column = switchTo;
       for(let i of filter_dict){
         console.log(i)
-        let data = {name:i.name,parent:i.id,value:i.newVal};
+        let data = {name:i.name,parent:data.data.id,value:i.newVal};
         this.addCharacteristic(data);
       }
     },
