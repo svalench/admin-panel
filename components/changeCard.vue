@@ -380,10 +380,11 @@ export default {
                  }
 
             if(this.files_slider.length>0){
+              let parent = this.card.id
               for(let i in this.files_slider){
                 let imgForm = new FormData();
                 imgForm.append('img', this.files_slider[i]);
-                imgForm.append('parent', this.card.id);
+                imgForm.append('parent', parent);
               await this.$axios.post('/admin/catalog/cardproduct_img_admin/',imgForm);
               }
            }
