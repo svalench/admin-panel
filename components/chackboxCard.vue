@@ -173,6 +173,7 @@ export default {
       }else{
         this.list[this.column].filter_dict.splice(this.list[this.column].filter_dict.findIndex(x=>x.id===data.data.id), 1)
       }
+      return data;
     },
     /**
      * обновляет поля на сервере
@@ -241,6 +242,8 @@ export default {
           alert(msg);
         });
       data.data['filter_dict'] = []
+      data.data['filters'] = []
+      data.data['filters2'] = []
       let switchTo = this.list.length;
       let filter_dict = this.list[this.column]['filter_dict'];
       console.log(filter_dict)
@@ -249,7 +252,8 @@ export default {
       for(let i of filter_dict){
         console.log(i)
         let data1 = {name:i.name,parent:i.parent, value:i.value};
-        this.addCharacteristic(data1, true);
+        let res_add = await this.addCharacteristic(data1, true);
+        this.list[this.column]['filters'].push(res_add.data.id)
       }
     },
     /**
