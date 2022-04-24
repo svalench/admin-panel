@@ -24,7 +24,10 @@
           </v-col>
         </v-row>
       </template>
-
+       <template v-slot:item.is_superuser="{ item }">
+         <v-icon v-if="item.is_superuser">mdi-check</v-icon>
+         <v-icon v-if="!item.is_superuser">mdi-minus</v-icon>
+       </template>
       <template v-slot:item.date_joined="{ item }">
           {{new Date(item.date_joined).toLocaleString()}}
     </template>
@@ -38,7 +41,7 @@
     ></v-img>
       </template>
     <template v-slot:item.action="{ item }">
-     <v-btn class="error" @click="deleteUser(item)"> <v-icon light>
+     <v-btn class="error" v-if="!item.is_superuser" @click="deleteUser(item)"> <v-icon light>
               mdi-delete-forever
             </v-icon></v-btn>
       <v-btn class="accent" @click="updateUser(item)">
@@ -91,7 +94,7 @@ import cartUserChange from '@/components/cartChangeUser.vue'
     },
     watch:{
         search(newval){
-          if(newval==''){
+          if(newval===''){
             if(this.timer!=null){clearTimeout(this.timer)}
             this.getMoreUsers()
           }else{
@@ -120,11 +123,16 @@ import cartUserChange from '@/components/cartChangeUser.vue'
             text: 'email',
             value: 'email',
             filter: value => {
-              if (!this.calories) return true
+              if (!this.email.length) return true
 
-              return value < parseInt(this.calories)
+              return value < this.email
             },
           },
+          {
+            text: 'username',
+            value: 'username',
+          },
+          { text: 'админ', value: 'is_superuser' },
           // { text: 'Ник пользователя', value: 'username' },
            { text: 'изображение', value: 'img' },
           { text: 'имя', value: 'first_name' },

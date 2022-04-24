@@ -163,6 +163,9 @@ export default {
       let data =  await  this.$axios.post(`/admin/catalog/product_filters_row/`,payload)
       this.list[this.column].filter_dict.push(data.data)
       let res = await this.updProductFields();
+      console.log(res, 'res')
+      console.log(data, 'data')
+      console.log(this.list[this.column], 'this.list[this.column]')
       if(res){
         this.checkedCh = null;
       this.newVal = null;
@@ -245,7 +248,7 @@ export default {
       this.column = switchTo;
       for(let i of filter_dict){
         console.log(i)
-        let data1 = {name:i.name,parent:i.parent, value:i.newVal};
+        let data1 = {name:i.name,parent:i.parent, value:i.value};
         this.addCharacteristic(data1, true);
       }
     },
