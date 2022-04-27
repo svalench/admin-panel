@@ -9,7 +9,8 @@
       :loading ="loading"
       :footer-props="footerProps"
       class="elevation-1"
-
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
     >
       <template v-slot:top>
         <v-row>
@@ -70,6 +71,8 @@ export default {
     },
     data(){
         return{
+            sortBy: 'id',
+            sortDesc: false,
             rightDrawer:false,
             right:true,
             cardproducts:[],

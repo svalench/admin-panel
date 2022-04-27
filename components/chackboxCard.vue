@@ -72,7 +72,7 @@
             </v-card-text>
 
             <v-card-actions>
-                <v-overflow-btn return-object
+                <v-combobox return-object
       class="my-2"
       :items="all_characteristic"
       item-text="name"
@@ -80,7 +80,7 @@
       label="добавить"
       v-model="checkedCh"
       target="#dropdown-example-1"
-    ></v-overflow-btn>
+    ></v-combobox>
               <v-text-field v-show="checkedCh" v-model="newVal"></v-text-field>
               <v-btn v-show="checkedCh" @click="addCharacteristic" color="green"><v-icon>mdi-plus</v-icon></v-btn>
               </v-card-actions>
