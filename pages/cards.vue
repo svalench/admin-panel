@@ -38,6 +38,9 @@
       <template v-slot:item.description="{ item }">
         <span v-html="(item.description && item.description.length>300)?item.description.substring(0,300):item.description"></span>
       </template>
+           <template v-slot:item.is_sale="{ item }">
+             <v-checkbox v-model="item.is_sale" @click="update_sale(item)"></v-checkbox>
+           </template>
       <template v-slot:item.actions="{ item }">
      <v-btn @click="deleteCard(item)" class="error"> <v-icon light>
               mdi-delete-forever
@@ -106,6 +109,7 @@ export default {
             value: 'name',
           },
           { text: 'описание', value: 'description' },
+          { text: 'На акции', value: 'is_sale' },
           { text: 'категория', value: 'cat_name' },
           { text: 'изображение', value: 'img' },
           { text: 'производитель', value: 'manufacturer_name' },
@@ -136,6 +140,13 @@ export default {
       },
     },
     methods:{
+      async update_sale(item){
+          let res = await this.$axios.patch(`/admin/catalog/cardproduct_admin/${item.id}/`,
+                                        {is_sale:item.is_sale}).catch(function (err){
+            console.log(err.response)
+          })
+          console.log(res)
+      },
       add_to_arr(data){
         this.cardproducts.push(data)
       },
