@@ -20,7 +20,7 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.PRIVATE_KEY }}
+          pass: ${{ secrets.SSH_PASS }}
           command: |
             cd /var/www/www-root/data/www/admin.arhiterm.by/admin/admin-panel
             git pull
