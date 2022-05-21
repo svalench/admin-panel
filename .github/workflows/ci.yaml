@@ -21,8 +21,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: '|1|zO9SL42ViyZHQAYXGQZ7Ms7hKEk=|osdNL7OSkatSNYNUqPNa6mqdZDU='
 
-#      - name: Adding Known Hosts
-#        run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+      - name: Adding Known Hosts
+        run: ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy with rsync
         run: rsync -avz ./dist/ ${{ secrets.SSH_USER }}@${{ secrets.HOST }}:/var/www/www-root/data/www/admin.arhiterm.by/admin/admin-panel/dist/
