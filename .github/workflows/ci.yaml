@@ -30,7 +30,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.PRIVATE_KEY }}
-          script: |
+          command: |
             cd /var/www/www-root/data/www/admin.arhiterm.by/admin/admin-panel
             git pull
       - name: Deploy with rsync
