@@ -27,7 +27,7 @@ jobs:
       - name: git pull
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.IP }}
+          host: ${{ secrets.HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
