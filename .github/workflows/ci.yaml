@@ -25,4 +25,4 @@ jobs:
         run: ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy with rsync
-        run: rsync -avz ./dist/ ${{ secrets.SSH_USER }}@${{ secrets.HOST }}:/var/www/www-root/data/www/admin.arhiterm.by/admin/admin-panel/dist/
+        run: rsync -avz ./dist/ ${{ secrets.SSH_USER }}@${{ secrets.HOST }}:/var/www/www-root/data/www/admin.arhiterm.by/admin/test/
