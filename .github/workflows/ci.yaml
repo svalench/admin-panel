@@ -25,7 +25,7 @@ jobs:
         run: ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
       - name: git pull
-        uses: appleboy/ssh-action@master
+        uses: fifsky/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.SSH_USER }}
