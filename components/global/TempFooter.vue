@@ -3,7 +3,7 @@
     <v-footer
       app
     >
-      <span>&copy; {{ new Date().getFullYear() }} powered by Valenchits</span>
+      <span>&copy; {{ new Date().getFullYear() }} powered by <a href="https://valenchits.com">Valenchits!</a></span>
     </v-footer>
     </div>
 </template>
