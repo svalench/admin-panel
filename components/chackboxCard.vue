@@ -13,6 +13,9 @@
         <v-text-field label="цена со скидкой" :default="null" v-model="list[column].discont" :value="ifset(list[column],'discont', null)"> </v-text-field>
         <v-text-field label="ID  1С" v-model="list[column].s1_id" :value="ifset(list[column],'s1_id')"> </v-text-field>
         <v-text-field label="вес" v-model="list[column].weight" :value="ifset(list[column],'weight')"> </v-text-field>
+        <v-checkbox v-model="list[column].is_hidden" :value="ifset(list[column],'is_hidden')" label="скрыть"></v-checkbox>
+        <v-text-field label="описание" v-model="list[column].comment" :value="ifset(list[column],'comment')"> </v-text-field>
+        <v-text-field label="позиция" v-model="list[column].position" :value="ifset(list[column],'position')"> </v-text-field>
         </div>
     </v-col>
 
@@ -202,6 +205,9 @@ export default {
         price: '',
         s1_id: '',
         weight: '',
+        position: 999,
+        is_hidden: false,
+        comment: '',
       };
       this.list.push(this.add_to);
         this.column = 0;
