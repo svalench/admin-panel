@@ -23,6 +23,23 @@
     </v-btn>
 
   </form>
+      <v-snackbar
+      v-model="snackbar"
+      :vertical="vertical"
+    >
+      {{ text }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          :color="color_snack"
+          text
+          v-bind="attrs"
+          @click="snackbar = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
     </div>
 </template>
 <script>
@@ -32,8 +49,12 @@ export default {
         return{
             logininfo:{
                 username:'',
-                password:''
+                password:'',
             },
+          text: '',
+          color_snack: 'green',
+          snackbar: false,
+          vertical: true,
         }
     },
     methods:{
@@ -41,17 +62,26 @@ export default {
             this.authenticate()
         },
         async authenticate(){
-            await this.$auth.loginWith('local', { data: this.logininfo }).then(response => { 
+            await this.$auth.loginWith('local', { data: this.logininfo }).then(response => {
                 console.log(response);
                 if(response.data.is_admin){
-                    alert('Success login');
+                    this.text = 'Успешный вход';
+                    this.color_snack = 'green';
+                    this.snackbar = true;
+
                     this.$router.push('/');
                 }else{
+                    this.text = 'вы не админ';
+                    this.color_snack = 'yellow';
+                    this.snackbar = true;
                      this.$auth.logout();
                 }
-                
+
             })
             .catch(error => {
+                this.text = 'Неудача';
+                    this.color_snack = 'red';
+                    this.snackbar = true;
                 this.errors = [];
                 let str = "";
                 for(let i in error.response.data){
@@ -61,7 +91,7 @@ export default {
                     }
                 }
             });
-        
+
       },
     }
 }
