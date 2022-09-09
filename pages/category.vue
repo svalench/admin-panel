@@ -21,14 +21,6 @@
                            <v-text-field type="numeric" v-model="addCat.position" :value="addCat.position" label="Позиция"></v-text-field>
                          </v-col>
                             <v-col>
-                                <v-textarea
-                                    outlined
-                                    name="input-7-4"
-                                    label="описание"
-                                    :value="addCat.description"
-                                    ></v-textarea>
-                            </v-col>
-                            <v-col>
                                 <div>
                                     <v-checkbox
                                     v-model="addCat.show_in_start"
@@ -46,9 +38,16 @@
                             </v-col>
                             <v-col><v-row><v-col cols="2"><v-icon @click="addGlobalCatFunc()">mdi-check-bold</v-icon></v-col> <v-col><v-icon @click="addGlobalCat=false">mdi-minus</v-icon></v-col></v-row></v-col>
                        </v-row>
+                     <v-row>
+                       <quill-editor
+                        ref="editor"
+                        v-model="addCat.description"
+                        :options="editorOption"
+                      ></quill-editor>
+                      </v-row>
                    </v-col>
                 </v-row>
-    <v-list>
+    <v-list style="margin-top: 70px;">
       <v-list-group
         v-for="item in categories"
         :key="item.id"
@@ -73,6 +72,10 @@
                       </v-img>
                   </v-col>
               </v-row>
+            <v-row>
+              <div v-html="item.description">
+              </div>
+            </v-row>
 
           </v-list-item-content>
         </template>
@@ -134,10 +137,42 @@
     </div>
 </template>
 <script>
+import textEditor from "~/components/global/textEditor";
+import chackboxCard from "~/components/chackboxCard";
+var toolbarOptions = [
+  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+  ['blockquote', 'code-block'],
+  [{'container': ['image']}],
+  [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+  [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+  [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+  [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+  [{ 'direction': 'rtl' }],                         // text direction
+
+  [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+  [{'image':[]}],
+  [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+  [{ 'font': [] }],
+  [{ 'align': [] }],
+  ['image'],
+  ['clean']                                         // remove formatting button
+];
 export default {
   middleware: 'auth',
+  components:{
+      textEditor,
+  },
     data(){
         return{
+            editorOption: {
+                  modules:{
+                      toolbar: {
+                       container:  toolbarOptions,
+                      }
+                  },
+                  theme: 'snow'
+            },
             files:[],
             categories:[],
             loading:false,
