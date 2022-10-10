@@ -46,13 +46,18 @@
                         <v-text-field v-model="slider.title" :value="slider.title" label="заголовок"></v-text-field>
                     </v-row>
                     <v-row>
-                            <v-textarea
-                                    outlined
-                                    name="input-7-4"
-                                    label="описание"
-                                    v-model="slider.description"
-                                    :value="slider.description"
-                            ></v-textarea>
+                       <quill-editor
+                        ref="editor"
+                        v-model="slider.description"
+                        :options="editorOption"
+                      ></quill-editor>
+<!--                            <v-textarea-->
+<!--                                    outlined-->
+<!--                                    name="input-7-4"-->
+<!--                                    label="описание"-->
+<!--                                    v-model="slider.description"-->
+<!--                                    :value="slider.description"-->
+<!--                            ></v-textarea>-->
                     </v-row>
                   <v-row>
                         <v-text-field v-model="slider.link" :value="slider.link" label="ссылка"></v-text-field>
@@ -94,9 +99,37 @@
     </div>
 </template>
 <script>
+import textEditor from "~/components/global/textEditor";
+var toolbarOptions = [
+  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+  ['blockquote', 'code-block'],
+  [{'container': ['image']}],
+  [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+  [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+  [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+  [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+  [{ 'direction': 'rtl' }],                         // text direction
+
+  [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+  [{'image':[]}],
+  [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+  [{ 'font': [] }],
+  [{ 'align': [] }],
+  ['image'],
+  ['clean']                                         // remove formatting button
+];
 export default {
     data(){
         return{
+          editorOption: {
+                  modules:{
+                      toolbar: {
+                       container:  toolbarOptions,
+                      }
+                  },
+                  theme: 'snow'
+            },
             files:[],
             videos:[],
             loading:false,
