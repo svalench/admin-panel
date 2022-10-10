@@ -83,8 +83,10 @@
         <v-card-title v-else>
             <v-text-field v-model="card.name" :value="card.name" label="название"></v-text-field>
         <v-icon @click="changeRow.name=true">mdi-check-bold</v-icon>
-
         </v-card-title>
+      <v-card-title>
+        <v-text-field v-model="card.kirilica_name" :value="card.kirilica_name" label="url кирилица"></v-text-field>
+      </v-card-title>
         <v-card-title>
             <v-text-field v-model="card.position" :value="card.position" label="Позиция в каталоге"></v-text-field>
         </v-card-title>
@@ -345,6 +347,7 @@ export default {
                     formData.append('filters',  this.filters_select[i]);
                 }
                  formData.append('name', this.card.name);
+                 formData.append('kirilica_name', this.card.kirilica_name);
                  formData.append('is_active', this.card.is_active===undefined?false:this.card.is_active);
 
                  formData.append('discont', this.card.discont);
