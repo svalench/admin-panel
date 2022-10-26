@@ -44,7 +44,13 @@
                         v-model="addCat.description"
                         :options="editorOption"
                       ></quill-editor>
+
+
                       </v-row>
+                     <v-row style="margin-top: 150px;">
+                        <hr>
+                       <v-textarea label="SEO писание" v-model="addCat.description_seo"></v-textarea>
+                     </v-row>
                    </v-col>
                 </v-row>
     <v-list style="margin-top: 70px;">
@@ -104,6 +110,7 @@
                                     label="описание"
                                     :value="addSecondCatObj.description"
                                     ></v-textarea>
+                               <v-textarea label="SEO писание" v-model="addSecondCatObj.description_seo"></v-textarea>
                             </v-col>
 
                             <v-col><v-row><v-col cols="3"><v-icon @click="addSecondCatFunc(item)">mdi-check-bold</v-icon></v-col> <v-col><v-icon @click="addSecondCat=false">mdi-minus</v-icon></v-col></v-row></v-col>
@@ -241,16 +248,17 @@ export default {
                 formData.append('title', this.addCat.title);
                 formData.append('position', this.addCat.position);
                 formData.append('description', this.addCat.description);
+                formData.append('description_seo', this.addCat.description_seo);
                 formData.append('show_in_start', this.addCat.show_in_start==undefined?false:this.addCat.show_in_start);
             if(this.updGlobalCat){;
                 await this.$axios.put(`/admin/catalog/category_first/${this.addCat.id}/`, formData,{headers: {'Content-Type': 'multipart/form-data'}});
                 this.updGlobalCat = false;
-                this.addCat={name:'',title:'',description:''};
+                this.addCat={name:'',title:'',description:'', description_seo: ''};
                 this.addGlobalCat = false;
             }else{
            let data = await this.$axios.post('/admin/catalog/category_first/', formData,{headers: {'Content-Type': 'multipart/form-data'}});
            this.categories.push(data.data);
-           this.addCat={name:'',title:'',description:'',show_in_start:false};
+           this.addCat={name:'',title:'',description:'', description_seo:'',show_in_start:false};
            this.addGlobalCat = false;
             }
         },
@@ -267,7 +275,7 @@ export default {
              if(this.updSecondCat){
                   delete this.addSecondCatObj.img;
                  await this.$axios.put(`/admin/catalog/category_second/${this.addSecondCatObj.id}/`, this.addSecondCatObj);
-                 this.addSecondCatObj={name:'',title:'',description:''};
+                 this.addSecondCatObj={name:'',title:'',description:'', description_seo: ''};
                 this.addSecondCat = false;
                  this.updSecondCat = false;
              }else{
@@ -279,7 +287,7 @@ export default {
                   const index = this.categories.indexOf(item);
                 this.categories[index].child.push(JSON.parse(JSON.stringify(this.addSecondCatObj)));
              }
-           this.addSecondCatObj={name:'',title:'',description:''};
+           this.addSecondCatObj={name:'',title:'',description:'', description_seo: ''};
            this.addSecondCat = false;
              }
         },

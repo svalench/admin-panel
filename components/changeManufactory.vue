@@ -88,8 +88,17 @@
           outlined
         ></v-select>
     </v-card-title>
+      <v-row style="margin-top: 150px;">
+        <hr>
+       <v-textarea label="SEO писание" v-model="factory.description_seo"></v-textarea>
+     </v-row>
+      <v-row style="margin-top: 150px;">
+        <hr>
+       <v-text-field label="Страна производитель" v-model="factory.country"></v-text-field>
+     </v-row>
     </v-col>
     </v-row>
+
 
     <v-divider class="mx-4"></v-divider>
 
@@ -122,7 +131,7 @@ export default {
             files:[],
           filesDocs:[],
             loading:false,
-             changeRow:{name:false, description:false, nikname:false, email:false},
+             changeRow:{name:false, description:false, nikname:false, email:false, description_seo: '', country: ''},
         }
     },
     props:['factory','rightDrawer'],
@@ -177,6 +186,8 @@ export default {
                  }
 
                  formData.append('description', this.factory.description);
+                 formData.append('country', this.factory.country);
+                 formData.append('description_seo', this.factory.description_seo);
               let d = await this.$axios.post(`/admin/catalog/manufacturers/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
                if(this.filesDocs.length>0){
               for(let i in this.filesDocs){
@@ -207,6 +218,8 @@ export default {
            }
                  formData.append('show_in_start', this.factory.show_in_start==undefined?false:this.factory.show_in_start);
                  formData.append('description', this.factory.description);
+                 formData.append('country', this.factory.country);
+                 formData.append('description_seo', this.factory.description_seo);
                 this.$axios.put(`/admin/catalog/manufacturers/${this.factory.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
 
             }

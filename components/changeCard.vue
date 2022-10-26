@@ -150,6 +150,7 @@
         v-model="card.description"
         :options="editorOption"
       ></quill-editor>
+      <v-textarea label="SEO писание" v-model="card.description_seo"></v-textarea>
  </v-card-text>
 
     </v-col>
@@ -363,6 +364,7 @@ export default {
                  }
 
                  formData.append('description', this.card.description);
+                 formData.append('description_seo', this.card.description_seo);
                  formData.append('multiplicity', this.card.multiplicity);
                  formData.append('units', this.card.units);
                  if (this.card.id){
