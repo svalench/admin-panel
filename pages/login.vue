@@ -1,52 +1,56 @@
 <template>
-    <div class="">
+  <div>
+  <div class="logo-pace">
+    ARHITERM
+    <div class="aboult">
+      working since 2008
+    </div>
+  </div>
+    <div class="form-input">
+      <b-overlay :show="show" rounded="sm">
     <form>
     <v-text-field
       v-model="logininfo.username"
       :counter="10"
-      label="Name"
+      label="логин"
       required
-
+      @keydown.enter="submit"
     ></v-text-field>
     <v-text-field
       v-model="logininfo.password"
-      label="password"
+      label="пароль"
       required
+      type="password"
+      @keydown.enter="submit"
     ></v-text-field>
-
-
-    <v-btn
-      class="mr-4"
-      @click="submit"
-    >
-      Вход
-    </v-btn>
-
+    <v-btn class="mr-4" @click="submit"> Вход </v-btn>
   </form>
-      <v-snackbar
-      v-model="snackbar"
-      :vertical="vertical"
-    >
-      {{ text }}
-
+      </b-overlay>
+      <v-snackbar v-model="snackbar"  :vertical="vertical">{{ text }}
       <template v-slot:action="{ attrs }">
-        <v-btn
-          :color="color_snack"
-          text
-          v-bind="attrs"
-          @click="snackbar = false"
-        >
-          Close
+        <v-btn :color="color_snack" text v-bind="attrs" @click="snackbar = false">
+          закрыть
         </v-btn>
       </template>
     </v-snackbar>
+    </div>
     </div>
 </template>
 <script>
 export default {
     layout:'login',
+  head: {
+    link: [
+      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=IM%20Fell%20DW%20Pica%20SC&display=swap",
+      },
+    ],
+  },
     data(){
         return{
+          show: false,
             logininfo:{
                 username:'',
                 password:'',
@@ -59,27 +63,31 @@ export default {
     },
     methods:{
         submit(){
+
             this.authenticate()
         },
         async authenticate(){
+          this.show=true;
             await this.$auth.loginWith('local', { data: this.logininfo }).then(response => {
                 console.log(response);
                 if(response.data.is_admin){
                     this.text = 'Успешный вход';
                     this.color_snack = 'green';
                     this.snackbar = true;
-
-                    this.$router.push('/');
+                    this.show=false;
+                    setTimeout((x)=>{this.$router.push('/')}, 1000)
                 }else{
                     this.text = 'вы не админ';
                     this.color_snack = 'yellow';
                     this.snackbar = true;
+                    this.show=false
                      this.$auth.logout();
                 }
 
             })
             .catch(error => {
-                this.text = 'Неудача';
+              this.show=false;
+                this.text = 'Введены не верные данные';
                     this.color_snack = 'red';
                     this.snackbar = true;
                 this.errors = [];
@@ -96,3 +104,19 @@ export default {
     }
 }
 </script>
+<style scoped>
+.form-input{
+  padding: 10%;
+}
+.logo-pace{
+  margin-top: 5%;
+  text-align: center;
+  font-size: 30px;
+  font-family: 'IM Fell DW Pica SC';
+}
+.aboult{
+  text-align: center;
+  font-size: 12px;
+  font-family: 'IM Fell DW Pica SC';
+}
+</style>
