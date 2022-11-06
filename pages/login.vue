@@ -7,7 +7,12 @@
     </div>
   </div>
     <div class="form-input">
-      <b-overlay :show="show" rounded="sm">
+      <v-overlay :value="show" rounded="sm">
+        <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+      </v-overlay>
     <form>
     <v-text-field
       v-model="logininfo.username"
@@ -25,7 +30,6 @@
     ></v-text-field>
     <v-btn class="mr-4" @click="submit"> Вход </v-btn>
   </form>
-      </b-overlay>
       <v-snackbar v-model="snackbar"  :vertical="vertical">{{ text }}
       <template v-slot:action="{ attrs }">
         <v-btn :color="color_snack" text v-bind="attrs" @click="snackbar = false">
