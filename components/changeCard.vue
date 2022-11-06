@@ -87,6 +87,9 @@
       <v-card-title>
         <v-text-field v-model="card.kirilica_name" :value="card.kirilica_name" label="url кирилица"></v-text-field>
       </v-card-title>
+      <v-card-title>
+        <v-text-field v-model="card.mfr_name" :value="card.mfr_name" label="производитель"></v-text-field>
+      </v-card-title>
         <v-card-title>
             <v-text-field v-model="card.position" :value="card.position" label="Позиция в каталоге"></v-text-field>
         </v-card-title>
@@ -161,6 +164,26 @@
         </v-card-text>
 
 <v-divider class="mx-4"></v-divider>
+          <v-row>
+            <v-col>
+              <div v-for="(item,k) in card.popularly" :key="k">
+                <span>{{item}} </span>
+                <span style="cursor: pointer; border: solid 2px black" @click="card.popularly.splice(k,1)">
+                  <v-icon> mdi-minus</v-icon></span>
+              </div>
+            </v-col>
+            <v-col>
+              <v-autocomplete :search-input.sync="searchSelect"  v-model="added_arr" hide-no-data
+             chips hide-selected item-value="id" item-text="name" :loading="load_other_cards"
+       :items="itemsSearchCard" label="с этим товаром покупают" placeholder="Start typing to Search"
+        prepend-icon="mdi-database-search"  return-object clearable multiple
+        >
+         </v-autocomplete>
+            </v-col>
+          </v-row>
+                 <v-card-title>
+
+      </v-card-title>
     <v-divider class="mx-4"></v-divider>
     <v-card-actions>
       <v-btn
@@ -215,6 +238,9 @@ var toolbarOptions = [
 export default {
     data(){
         return{
+          added_arr: [],
+          load_other_cards: false,
+          searchSelect: '',
           editorOption: {
               modules:{
                   toolbar: {
@@ -242,6 +268,8 @@ export default {
             select_cat_second:null,
             loading:false,
              changeRow:{name:true, description:false, nikname:false, email:false},
+          timerSerach: null,
+          resultSearch: [],
         }
     },
   components:{
@@ -252,7 +280,13 @@ export default {
     mounted(){
       this.getValuesFilters()
     },
+
     watch:{
+      searchSelect(nv){
+        if(!nv) return;
+        clearTimeout(this.timerSerach)
+        this.timerSerach = setTimeout(this.getListAllCards, 500, nv)
+      },
       group_filter(newval){
         if(Array.isArray(newval) && newval.length>0){
            this.filters_value = [];
@@ -347,8 +381,20 @@ export default {
                 for(let i in this.filters_select){
                     formData.append('filters',  this.filters_select[i]);
                 }
+                let resulr_popular =  []
+                if(this.card.popularly.length){
+                  resulr_popular = this.card.popularly.concat(this.added_arr.map(x=>parseInt(x.id)))
+                }else{
+                  resulr_popular = this.added_arr.map(x=>parseInt(x.id))
+                }
+
                  formData.append('name', this.card.name);
                  formData.append('kirilica_name', this.card.kirilica_name);
+                 formData.append('mfr_name', this.card.mfr_name);
+                 for(let i of resulr_popular){
+                   formData.append('popularly', i);
+                 }
+
                  formData.append('is_active', this.card.is_active===undefined?false:this.card.is_active);
 
                  formData.append('discont', this.card.discont);
@@ -367,10 +413,11 @@ export default {
                  formData.append('description_seo', this.card.description_seo);
                  formData.append('multiplicity', this.card.multiplicity);
                  formData.append('units', this.card.units);
+                 let res = null;
                  if (this.card.id){
-                   await this.$axios.patch(`/admin/catalog/cardproduct_admin/${this.card.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
+                  res = await this.$axios.patch(`/admin/catalog/cardproduct_admin/${this.card.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
+                   if(res===undefined){return ;}else{this.card = res.data; this.$emit('add_to_arr', res.data)}
                  }else{
-
                   let d =  await this.$axios.post(`/admin/catalog/cardproduct_admin/`,formData,{headers: {'Content-Type': 'multipart/form-data'}}).catch(function(err){
                      if (err.response) {
                        let str = "";
@@ -409,8 +456,21 @@ export default {
         close(){
             this.$emit('update:rightDrawer', false)
         },
-
+      /**
+       * получение все карточек id название
+       */
+    async getListAllCards(search){
+      this.load_other_cards = true;
+      let response = await this.$axios.$get(`/catalog/product-simple/?&ordering=position&limit=50&search=${search}`)
+        this.resultSearch = response.results;
+       this.load_other_cards = false;
     },
+    },
+  computed:{
+      itemsSearchCard(){
+        return this.resultSearch;
+      }
+  }
 }
 </script>
 <style>
