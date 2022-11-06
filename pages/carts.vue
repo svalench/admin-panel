@@ -111,7 +111,7 @@ export default {
       this.loading = true;
       const {sortBy, sortDesc, page, itemsPerPage} = this.options;
       this.offset = itemsPerPage * (page - 1);
-      let data = await this.$axios.get(`/admin/cart/carts/?limit=${itemsPerPage}&offset=${this.offset}`);
+      let data = await this.$axios.get(`/admin/cart/carts-admin/?limit=${itemsPerPage}&offset=${this.offset}&ordering=-id`);
       this.items = data.data.results;
       this.count = data.data.count;
       this.loading = false;
@@ -120,7 +120,7 @@ export default {
             this.loading = true;
             const { sortBy, sortDesc, page, itemsPerPage } = this.options;
              this.offset = itemsPerPage*(page-1);
-           let data = await this.$axios.get(`/admin/cart/carts/?limit=${itemsPerPage}&offset=${this.offset}&search=${search}`);
+           let data = await this.$axios.get(`/admin/cart/carts-admin/?limit=${itemsPerPage}&offset=${this.offset}&search=${search}&ordering=-id`);
            this.items = data.data.results;
       this.count = data.data.count;
       this.loading = false;
