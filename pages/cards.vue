@@ -148,7 +148,7 @@ export default {
           console.log(res)
       },
       add_to_arr(data){
-        this.cardproducts.push(data)
+        this.cardproducts.unshift(data)
       },
         async deleteCard(item){
              if(!confirm('Вы уверены?')){return}

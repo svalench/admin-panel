@@ -382,7 +382,7 @@ export default {
                     formData.append('filters',  this.filters_select[i]);
                 }
                 let resulr_popular =  []
-                if(this.card.popularly.length){
+                if(this.card.popularly && this.card.popularly.length){
                   resulr_popular = this.card.popularly.concat(this.added_arr.map(x=>parseInt(x.id)))
                 }else{
                   resulr_popular = this.added_arr.map(x=>parseInt(x.id))
@@ -428,7 +428,7 @@ export default {
                        return;
                      }
                    });
-                  if(d===undefined){return ;}else{this.card = d.data; this.$emit('add_to_arr', d.data)}
+                  if(d===undefined){return ;}else{console.log(d);this.card = d.data; this.$emit('add_to_arr', d.data)}
                  }
 
             if(this.files_slider.length>0){
