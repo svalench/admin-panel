@@ -29,6 +29,10 @@
       @keydown.enter="submit"
     ></v-text-field>
     <v-btn class="mr-4" @click="submit"> Вход </v-btn>
+      <div style="padding: 10%">
+        <hr>
+        <div class="all-rights">Copyright ©. All rights reserved</div>
+      </div>
   </form>
       <v-snackbar v-model="snackbar"  :vertical="vertical">{{ text }}
       <template v-slot:action="{ attrs }">
@@ -121,6 +125,12 @@ export default {
 .aboult{
   text-align: center;
   font-size: 12px;
+  font-family: 'IM Fell DW Pica SC';
+}
+.all-rights{
+  text-align: center;
+  font-size: 14px;
+  padding: 20px;
   font-family: 'IM Fell DW Pica SC';
 }
 </style>
