@@ -297,7 +297,7 @@ export default {
         },
         async getCategories(){
             this.loading = true;
-          let data =  await this.$axios.get('/catalog/categories/?limit=99999999');
+          let data =  await this.$axios.get('/catalog/categories/?format=json&limit=99999999');
           console.log(data);
           this.categories = data.data.results;
           this.loading = false;
