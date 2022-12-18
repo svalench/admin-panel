@@ -416,7 +416,7 @@ export default {
                  let res = null;
                  if (this.card.id){
                   res = await this.$axios.patch(`/admin/catalog/cardproduct_admin/${this.card.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
-                   if(res===undefined){return ;}else{this.card = res.data; this.$emit('add_to_arr', res.data)}
+                   // if(res===undefined){return ;}else{this.card = res.data; this.$emit('add_to_arr', res.data)}
                  }else{
                   let d =  await this.$axios.post(`/admin/catalog/cardproduct_admin/`,formData,{headers: {'Content-Type': 'multipart/form-data'}}).catch(function(err){
                      if (err.response) {
