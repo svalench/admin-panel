@@ -2,7 +2,7 @@
     <div>
         <v-card
     :loading="loading"
-    style="margin-top:3%;"
+    style="margin-top:3%; padding: 4%"
   >
     <template slot="progress">
       <v-progress-linear
@@ -58,14 +58,13 @@
     <v-card-text>
 
 <div v-if="changeRow.description">
-    <v-textarea
-          outlined
-          name="input-7-4"
-          label="description"
-           v-model="factory.description"
-          :value="factory.description"
-        ></v-textarea>
+    <quill-editor
+        ref="editor"
+        v-model="factory.description"
+        :options="editorOption"
+      ></quill-editor>
       <v-icon @click="changeRow.description=false">mdi-check-bold</v-icon>
+
      </div>
 
       <div v-else>{{factory.description?factory.description:'No description'}}  <v-icon @click="changeRow.description=true">mdi-lead-pencil</v-icon></div>
@@ -127,6 +126,26 @@
     </div>
 </template>
 <script>
+import textEditor from "~/components/global/textEditor";
+var toolbarOptions = [
+  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+  ['blockquote', 'code-block'],
+  [{'container': ['image']}],
+  [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+  [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+  [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+  [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+  [{ 'direction': 'rtl' }],                         // text direction
+
+  [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+  [{'image':[]}],
+  [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+  [{ 'font': [] }],
+  [{ 'align': [] }],
+  ['image'],
+  ['clean']                                         // remove formatting button
+];
 export default {
     data(){
         return{
@@ -135,11 +154,21 @@ export default {
           filesDocs:[],
             loading:false,
              changeRow:{name:false, description:false, nikname:false, email:false, description_seo: '', country: ''},
+          editorOption: {
+              modules:{
+                  toolbar: {
+                   container:  toolbarOptions,
+                  }
+              },
+              theme: 'snow'
+        },
         }
     },
+  components:{
+      textEditor
+  },
     props:['factory','rightDrawer'],
     mounted(){
-      console.log(this.factory)
     },
     watch:{
         rightDrawer(newval){
