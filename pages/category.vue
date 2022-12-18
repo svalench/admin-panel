@@ -50,6 +50,9 @@
                      <v-row style="margin-top: 150px;">
                         <hr>
                        <v-textarea label="SEO писание" v-model="addCat.description_seo"></v-textarea>
+                        <v-card-title>
+                          <v-text-field v-model="addCat.kirilica_name" label="url кирилица"></v-text-field>
+                        </v-card-title>
                      </v-row>
                    </v-col>
                 </v-row>
@@ -249,6 +252,7 @@ export default {
                 formData.append('position', this.addCat.position);
                 formData.append('description', this.addCat.description);
                 formData.append('description_seo', this.addCat.description_seo);
+                formData.append('kirilica_name', this.addCat.kirilica_name);
                 formData.append('show_in_start', this.addCat.show_in_start==undefined?false:this.addCat.show_in_start);
             if(this.updGlobalCat){;
                 await this.$axios.put(`/admin/catalog/category_first/${this.addCat.id}/`, formData,{headers: {'Content-Type': 'multipart/form-data'}});
