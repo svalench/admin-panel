@@ -69,6 +69,9 @@
      </div>
 
       <div v-else>{{factory.description?factory.description:'No description'}}  <v-icon @click="changeRow.description=true">mdi-lead-pencil</v-icon></div>
+    <v-card-title>
+        <v-text-field v-model="factory.kirilica_name" label="url кирилица"></v-text-field>
+      </v-card-title>
     <div>
       <v-checkbox
       v-model="factory.show_in_start"
@@ -172,7 +175,6 @@ export default {
            this.factory.docs_factories.splice( this.factory.docs_factories.findIndex(x=>x.id===d.id),1)
       },
         async save(){
-
             if(this.factory.id==undefined){
                 let formData = new FormData();
                  formData.append('img', this.files);
@@ -184,7 +186,7 @@ export default {
                       formData.append('cats', i);
                     }
                  }
-
+                 formData.append('kirilica_name', this.factory.kirilica_name);
                  formData.append('description', this.factory.description);
                  formData.append('country', this.factory.country);
                  formData.append('description_seo', this.factory.description_seo);
@@ -219,7 +221,9 @@ export default {
                  formData.append('show_in_start', this.factory.show_in_start==undefined?false:this.factory.show_in_start);
                  formData.append('description', this.factory.description);
                  formData.append('country', this.factory.country);
+                  formData.append('kirilica_name', this.factory.kirilica_name);
                  formData.append('description_seo', this.factory.description_seo);
+              console.log(this.factory.kirilica_name)
                 this.$axios.put(`/admin/catalog/manufacturers/${this.factory.id}/`,formData,{headers: {'Content-Type': 'multipart/form-data'}});
 
             }
